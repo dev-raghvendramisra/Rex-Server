@@ -1,0 +1,11 @@
+---
+server:
+  listen:
+  - 8000
+sslConfig:
+  cert: path
+  key: path
+workers: auto
+upstream:
+  servers:
+  - host: http://localhost:8000
