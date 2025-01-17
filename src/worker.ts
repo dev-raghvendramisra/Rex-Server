@@ -16,7 +16,7 @@ export default function startWorkProcess(config : rex_config){
             })
 
             server.listen(PORT,()=>{
-                console.log(`Worker process with ${process.pid} listening on ${PORT}`)
+                // console.log(`Worker process with ${process.pid} listening on ${PORT}`)
             })
         }
         const server = http.createServer((req,res)=>{
@@ -24,7 +24,7 @@ export default function startWorkProcess(config : rex_config){
             res.end("Hello from Worker process with pid: "+process.pid+"\n")
         })
         server.listen(PORT,()=>{
-            console.log(`Worker process with ${process.pid} listening on ${PORT}`)
+            // console.log(`Worker process with ${process.pid} listening on ${PORT}`)
         })
     }
 }

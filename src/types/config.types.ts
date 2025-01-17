@@ -17,7 +17,8 @@ export const configSchema = z.object({
       key:z.string()
     }).optional(),
     workers:z.union([z.number(),z.literal("auto")]),
-    upstream : upstreamSchema
+    upstream : upstreamSchema,
+    logFile:z.string()
 })
 
 export type rex_config = z.infer<typeof configSchema>

@@ -9,3 +9,4 @@ workers: auto
 upstream:
   servers:
   - host: http://localhost:8000
+logFile: output.log

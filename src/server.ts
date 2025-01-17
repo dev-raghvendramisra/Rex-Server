@@ -1,20 +1,15 @@
-import 'tsconfig-paths/register';
 import { rex_config } from '@types';
 import cluster from 'cluster';
 import startMasterProcess from './master';
-import configParser from './configParser';
 import startWorkProcess from './worker';
+import { parseCliArgs } from '@utils';
 
+const args = process.argv
+const config = parseCliArgs(args,'--config') as rex_config
 
-export default function startServer(config : rex_config){
-  if(cluster.isPrimary ){
-     startMasterProcess(config)
-  } 
-  else {
-     startWorkProcess(config)
-  }
+if(cluster.isPrimary){
+    startMasterProcess(config)
 }
-
-configParser().then((data)=>{
-    startServer(data)
-})
+else {
+    startWorkProcess(config)
+}
