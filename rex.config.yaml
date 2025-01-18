@@ -1,7 +1,7 @@
 ---
 server:
   listen:
-  - 8000
+  - 80
 sslConfig:
   cert: path
   key: path
@@ -9,4 +9,3 @@ workers: auto
 upstream:
   servers:
   - host: http://localhost:8000
-logFile: output.log

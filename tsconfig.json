@@ -12,7 +12,10 @@
     "baseUrl": "src",  // Base directory for resolving modules
     "paths": {
       "@utils": ["utils/index"],
-      "@types": ["types/index"]
+      "@types": ["types/index"],
+      "@worker": ["worker/index"],
+      "@master": ["master/index"],
+      "@lib" :  ["lib/index"]
     }
   },
   "include": ["src/**/*"],

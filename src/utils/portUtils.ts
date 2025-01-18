@@ -3,6 +3,21 @@ import os from 'os';
 import chalk from 'chalk';
 
 
+/**
+ * Checks if the current process has the necessary privileges to bind to privileged ports.
+ * On Linux systems, binding to ports below 1024 requires elevated privileges.
+ * 
+ * @returns {Promise<boolean>} A promise that resolves to `true` if the process has the necessary privileges, or `false` otherwise.
+ * 
+ * @example
+ * checkPortPrivilege().then((hasPriv) => {
+ *   if (hasPriv) {
+ *     console.log("Process has port binding privileges.");
+ *   } else {
+ *     console.log("Process does not have port binding privileges.");
+ *   }
+ * });
+ */
 export function checkPortPrivilege(): Promise<boolean> {
   return new Promise((resolve, reject) => {
     if (os.platform() === 'linux') {
@@ -22,6 +37,12 @@ export function checkPortPrivilege(): Promise<boolean> {
   });
 }
 
+/**
+ * Provides instructions on how to obtain the required port binding privileges based on the OS platform.
+ * 
+ * @example
+ * provideInstructions();
+ */
 export function provideInstructions() {
   const platform = os.platform();
 

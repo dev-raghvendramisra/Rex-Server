@@ -6,7 +6,8 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc --build && tsc-alias"
+    "build": "rm -rf dist && tsc --build && tsc-alias && touch dist/master/master.pid",
+    "stop": "ps aux | grep node | awk '{print $2}' | xargs kill"
   },
   "bin": {
     "rex": "node dist/cli/index.js"
@@ -25,6 +26,7 @@
     "chalk": "^4.1.2",
     "commander": "^13.0.0",
     "is-prime-number": "^2.1.0",
+    "winston": "^3.17.0",
     "yaml": "^2.7.0",
     "zod": "^3.24.1"
   }
