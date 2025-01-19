@@ -48,16 +48,7 @@ export async function doesPidExists(processIdPath: string): Promise<void> {
     await access(processIdPath); // Check if the file exists
   } catch (error: any) {
     if (error.code == "ENOENT") {
-      throw new Error(`
-          The PID file is missing. Please take one of the following actions:
-          1. Restart your machine to ensure all processes are cleared.
-          2. Kill all Node.js processes running on your system. (Recommended)
-
-          If you encounter the same error after taking the above actions, consider reinstalling the Rex-Server. 
-          Killing the Node.js processes is recommended if you're unsure.
-          Refer our documentation : https://github.com/dev-raghvendramisra/Rex-Server
-
-          After doing one of these steps, you can continue normal operation.
+      throw new Error(`> The PID file is missing. Please follow these steps to resolve the issue:\n> 1. Restart your machine to clear all processes.\n> 2. Terminate all Node.js processes running on your system (Recommended)\n> Command: ps aux | grep node | awk '{print $2}' | xargs kill\n\n> If the issue persists after performing the above steps, consider reinstalling the Rex-Server. \n> Terminating Node.js processes is recommended if you are unsure.\n\n> For more information, refer to our documentation: https://github.com/dev-raghvendramisra/Rex-Server \n\n> After completing these steps, you can resume normal operation.
       `);
     }
   }
