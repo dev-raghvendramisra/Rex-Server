@@ -2,6 +2,7 @@ import fs from 'fs/promises'
 import {parse} from 'yaml'
 import {configSchema} from '@types'
 import conf from 'conf/conf'
+import { checkPortPrivilege, provideInstructions } from '@utils'
 
 
 /**
@@ -34,5 +35,18 @@ export default async function configParser(configPath:string = conf.REX_CONFIG_P
     else if(valid.data.server.listen.includes(443) && !valid.data.sslConfig){
         throw ("Invalid config file syntax, there must be sslConfig, \n> Refer our documentation : https://github.com/dev-raghvendramisra/Rex-Server")
     }
-    return valid.data
+    const config = valid.data
+    const lowestPort = config.server.listen.sort()[0]
+    if(lowestPort>1024){
+        return config
+    }
+    else{   
+        const nodeHasPortPrives = await checkPortPrivilege()
+        if(nodeHasPortPrives){
+           return config
+        }
+        else {
+            return provideInstructions()
+        }
+    }
 }

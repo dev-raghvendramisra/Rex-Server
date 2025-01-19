@@ -1,7 +1,6 @@
 import chalk from "chalk";
 import { spawn } from "child_process";
 import configParser from "configParser";
-import { checkPortPrivilege, provideInstructions } from "@utils";
 import stopRexServer from "./stopRexServer";
 import {readPid,writePid} from "@utils";
 import conf from "conf/conf";
@@ -37,11 +36,6 @@ export default async function startRexServer(masterPidPath : string, configPath 
             await stopRexServer({ processId: prevMasterPID }, masterPidPath);
         }
         
-        const hasPrives = await checkPortPrivilege();
-        if (!hasPrives) {
-            return provideInstructions();
-        }
-        
         const config = await configParser(configPath);
         const jsonConfig = JSON.stringify(config);
         
@@ -65,8 +59,9 @@ export default async function startRexServer(masterPidPath : string, configPath 
                 process.exit(1);
             }
         });
-    } catch (error) {
-        console.log(chalk.redBright(`\n> Error starting Rex-Server server : ${error}\n`));
+    } catch (error : any) {
+        console.log(chalk.bold(chalk.redBright(`\n> Error starting Rex-Server server :`)));
+        console.log(chalk.redBright(`\n${error.message}\n`))
         process.exit(1);
     }
 }

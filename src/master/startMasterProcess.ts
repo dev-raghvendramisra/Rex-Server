@@ -49,7 +49,7 @@ export function startMasterProcess(config : REX_CONFIG){
                type:"error",
                data:{
                   code:error.code,
-                  message:`REX-STARTUP-FAILED\n Error: ${portError.errMsg}`
+                  message:`REX-STARTUP-FAILED\n>${portError.errMsg}`
                }
             })
             return terminateMasterProcess(cluster)

@@ -1,3 +1,6 @@
+import { exec } from 'child_process';
+import os from 'os';
+import chalk from 'chalk';
 import { REX_CONFIG } from "@types";
 
 /**
@@ -31,3 +34,66 @@ export function parseCliArgs(args:string[],argKey:string):REX_CONFIG | false{
     }
     return false;
 }
+
+
+
+/**
+ * Checks if the current process has the necessary privileges to bind to privileged ports.
+ * On Linux systems, binding to ports below 1024 requires elevated privileges.
+ * 
+ * @returns {Promise<boolean>} A promise that resolves to `true` if the process has the necessary privileges, or `false` otherwise.
+ * 
+ * @example
+ * checkPortPrivilege().then((hasPriv) => {
+ *   if (hasPriv) {
+ *     console.log("Process has port binding privileges.");
+ *   } else {
+ *     console.log("Process does not have port binding privileges.");
+ *   }
+ * });
+ */
+export function checkPortPrivilege(): Promise<boolean> {
+  return new Promise((resolve, reject) => {
+    if (os.platform() === 'linux') {
+      exec('getcap $(which node)', (err, stdout, stderr) => {
+        if (err) {
+          reject(stderr);
+        }
+        if (stdout.includes('cap_net_bind_service')) {
+          resolve(true);
+        } else {
+          resolve(false);
+        }
+      });
+    } else {
+      resolve(false);
+    }
+  });
+}
+
+/**
+ * Provides instructions on how to obtain the required port binding privileges based on the OS platform.
+ * 
+ * @example
+ * provideInstructions();
+ */
+export function provideInstructions() {
+    const platform = os.platform();
+
+    if (platform === 'linux') {
+        throw new Error(`> Missing capability: cap_net_bind_service\n> To bind to privileged ports, run the following command:\n> sudo setcap cap_net_bind_service=+ep $(which node)
+        `);
+    } else if (platform === 'darwin') {
+        throw new Error(`> On macOS, you need to use sudo to bind to ports below 1024.\> Try running Rex-Server with sudo, or use a port above 1024.
+        `);
+    } else if (platform === 'win32') {
+        throw new Error(`> On Windows, you may need to run your terminal as Administrator.\n> Run the command prompt or terminal as Administrator to bind to privileged ports.
+        `);
+    } else {
+        throw new Error(`> Unsupported platform. Please refer to your OS documentation for more information.
+        `);
+    }
+}
+
+
+
