@@ -5,6 +5,7 @@ import stopRexServer from "./stopRexServer";
 import {readPid,writePid} from "@utils";
 import conf from "conf/conf";
 import {IPCINFOMessgeName } from "@types";
+import path from "path";
 
 /**
  * Starts the Rex server, ensuring that any previously running instance is stopped before starting a new one.
@@ -25,6 +26,7 @@ import {IPCINFOMessgeName } from "@types";
  *   .catch(error => console.error('Error starting Rex server:', error));
  */
 export default async function startRexServer(masterPidPath : string, configPath ?: string) {
+  
     if (!configPath) {
         configPath = conf.REX_CONFIG_PATH;
     }
@@ -32,14 +34,14 @@ export default async function startRexServer(masterPidPath : string, configPath 
     try {
         const prevMasterPID = await readPid(masterPidPath);
         if (prevMasterPID) {
-            console.log(chalk.redBright("\n>REX-SERVER IS ALREADY RUNNING, SHUTTING IT DOWN TO START NEW ONE.\n"));
+            console.log(chalk.redBright("\n> REX-SERVER IS ALREADY RUNNING, SHUTTING IT DOWN TO START NEW ONE.\n"));
             await stopRexServer({ processId: prevMasterPID }, masterPidPath);
         }
         
         const config = await configParser(configPath);
         const jsonConfig = JSON.stringify(config);
         
-        const masterProcess = spawn('node', ['dist/index.js', `--config=${jsonConfig}`], {
+        const masterProcess = spawn('node', [conf.ENTRY_POINT_PATH, `--config=${jsonConfig}`], {
             detached: true,
             stdio: ["ignore", "ignore", "pipe"]
         });

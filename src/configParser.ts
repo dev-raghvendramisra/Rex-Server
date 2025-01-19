@@ -28,12 +28,14 @@ export default async function configParser(configPath:string = conf.REX_CONFIG_P
     const valid = configSchema.safeParse(configFile)
     if(valid.error){
         if(valid.error.issues[0].code=='too_big'){
-            throw ("Invalid config file syntax, port must lie in (0-65535) range \n> Refer our documentation : https://github.com/dev-raghvendramisra/Rex-Server");
+            throw new Error ("Invalid config file syntax, port must lie in (0-65535) range \n> Refer our documentation : https://github.com/dev-raghvendramisra/Rex-Server");
         }
-        else throw("Invalid config file syntax, "+valid.error.issues[0].message+"\n> Refer our documentation : https://github.com/dev-raghvendramisra/Rex-Server");
+        else {
+            throw new Error(`Invalid config file syntax: \n${JSON.stringify(valid.error.issues[0],null,2)}\n> Refer our documentation : https://github.com/dev-raghvendramisra/Rex-Server`);
+        }
     }
     else if(valid.data.server.listen.includes(443) && !valid.data.sslConfig){
-        throw ("Invalid config file syntax, there must be sslConfig, \n> Refer our documentation : https://github.com/dev-raghvendramisra/Rex-Server")
+        throw new Error ("Invalid config file syntax, there must be sslConfig, \n> Refer our documentation : https://github.com/dev-raghvendramisra/Rex-Server")
     }
     const config = valid.data
     const lowestPort = config.server.listen.sort()[0]

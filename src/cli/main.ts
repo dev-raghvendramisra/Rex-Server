@@ -22,7 +22,7 @@ program
 
 // Command to start the Rex server with a custom configuration file
 program
-  .command("use <configPath>")
+  .command("use")
   .description(
     "Start the Rex server using a specified configuration file. " +
     "Provide the path to 'rex.config.yaml' to customize the server settings."
