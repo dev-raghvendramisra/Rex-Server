@@ -1,4 +1,5 @@
 import startRexServer from "./startRexServer";
 import stopRexServer from "./stopRexServer";
+import initializeRexConfig from "./initializeRexConfig";
 
-export {startRexServer,stopRexServer}
+export {startRexServer,stopRexServer,initializeRexConfig}

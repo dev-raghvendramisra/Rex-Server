@@ -3,6 +3,8 @@ import {parse} from 'yaml'
 import {configSchema} from '@types'
 import conf from 'conf/conf'
 import { checkPortPrivilege, provideInstructions } from '@utils'
+import { access } from 'fs'
+import { formatObjects } from '@lib'
 
 
 /**
@@ -31,14 +33,35 @@ export default async function configParser(configPath:string = conf.REX_CONFIG_P
             throw new Error ("Invalid config file syntax, port must lie in (0-65535) range \n> Refer our documentation : https://github.com/dev-raghvendramisra/Rex-Server");
         }
         else {
-            throw new Error(`Invalid config file syntax: \n${JSON.stringify(valid.error.issues[0],null,2)}\n> Refer our documentation : https://github.com/dev-raghvendramisra/Rex-Server`);
+            throw new Error(`Invalid config file syntax: \n${formatObjects(valid.error.issues[0])}\n> Refer our documentation : https://github.com/dev-raghvendramisra/Rex-Server`);
         }
     }
-    else if(valid.data.server.listen.includes(443) && !valid.data.sslConfig){
+    else if(valid.data.server.instances.find((instance)=>{
+        instance.port==443 && instance.sslConfig
+    })){
         throw new Error ("Invalid config file syntax, there must be sslConfig, \n> Refer our documentation : https://github.com/dev-raghvendramisra/Rex-Server")
     }
     const config = valid.data
-    const lowestPort = config.server.listen.sort()[0]
+    
+    await Promise.all(config.server.instances.map((instance,idx)=>{
+        if(instance.public){
+            return new Promise((res,rej)=>{
+                access(instance.public as string,fs.constants.R_OK,(err)=>{
+                    if(err){
+                        const error = new Error(`> public_dir path for instance-${idx+1} is either invalid or lack read permissions`)
+                        rej(error)
+                    }
+                    else res(true)
+                })
+            })
+        }
+    }))
+
+    const lowestPort = config.server.instances.sort((instance1 ,instance2)=>{
+        if(instance1.port>instance2.port) return 1
+        if(instance1.port<instance2.port) return -1
+        else return 0
+    })[0].port
     if(lowestPort>1024){
         return config
     }

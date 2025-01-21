@@ -3,7 +3,7 @@ import winston, { format, transports } from 'winston'
 
 
 
-const logger = winston.createLogger({
+export const logger = winston.createLogger({
     transports:[
         new transports.File({
             filename:conf.LOG_FILE_PATH,
@@ -12,8 +12,7 @@ const logger = winston.createLogger({
                 format.timestamp({
                     format:()=>new Date().toUTCString()
                 }),
-                format.colorize(),
-                format.printf(type=>`\n[${type.timestamp}] \n${type.level}: ${type.message}`)
+                format.printf((type)=>`\n[${type.timestamp}] \n${type.level}: ${type.message}`)
             )
         })
     ]
@@ -21,4 +20,9 @@ const logger = winston.createLogger({
     
 })
 
-export default logger
+
+export function formatObjects(obj : Object | Array<any>){
+  return JSON.stringify(obj,null,2)
+}
+
+

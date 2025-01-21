@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <link rel="icon" type="image/png" href="favicon/favicon-96x96.png" sizes="96x96" />
+<link rel="icon" type="image/svg+xml" href="favicon/favicon.svg" />
+<link rel="shortcut icon" href="favicon/favicon.ico" />
+<link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png" />
+  <title>Welcome to Rex-Server</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
+    :root {
+      --primaryColor: #00C907
+    }
+    
+    *{
+      margin: 0;
+      text-decoration: none;
+    }
+    .roboto-font {
+      font-family: "Roboto", serif;
+      font-optical-sizing: auto;
+      font-weight: 600;
+      font-style: normal;
+      font-variation-settings:
+        "wdth" 100;
+    }
+
+    body {
+      font-family: Roboto;
+      background: rgb(31, 31, 31);
+      min-height: 100vh;
+      display: flex;
+      gap: 12rem;
+      color: whitesmoke;
+      flex-direction: initial;
+      justify-content: center;
+      align-items: center;
+      margin: 0;
+    }
+
+
+    .single {
+      width: 15rem;
+      height: 15rem;
+      background: rgb(82, 82, 82);
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      -moz-border-radius: 50%;
+      -webkit-border-radius: 50%;
+      border-radius: 50%;
+    }
+
+    .single::after {
+      content: "";
+      position: relative;
+      aspect-ratio: 1;
+      height: 120%;
+      border-radius: 50%;
+      box-shadow: 0 0 50px 2px var(--primaryColor);
+      top: 0%;
+      left: 0%;
+      z-index: -2;
+      opacity: 0;
+      -webkit-animation: halo 1s 0.5s infinite ease-out;
+      -moz-animation: halo 1s 0.5s infinite ease-out;
+      animation: halo 1s 0.5s infinite ease-out;
+    }
+    .header{
+       font-size: 4rem;
+    }
+    .sub-header{
+      font-size: 1.5rem;
+      margin-top: 2rem;
+    }
+    .text-basic{
+      font-size: 1.2rem;
+      margin-top: 0.5rem;
+    }
+    li{
+      margin-top: 0.5rem;
+      font-size: 1.2rem;
+    }
+    a:hover{
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    
+    @media (max-width: 1024px) {
+      body{
+        flex-direction:column;
+        gap:2rem;
+        padding-bottom:2rem;
+      }
+      .text-cont{
+        margin-top: 2rem; padding: 2rem;
+      }
+      .single{
+        height:8rem;
+        width: 8rem;
+      }
+    }
+    
+    @-webkit-keyframes halo {
+      0% {
+        opacity: 0;
+        -webkit-transform: scale(0.1);
+      }
+      
+      50% {
+        opacity: 1;
+      }
+
+      100% {
+        opacity: 0;
+        -webkit-transform: scale(1.2);
+      }
+    }
+
+    @-moz-keyframes halo {
+      0% {
+        opacity: 0;
+        -moz-transform: scale(0.1);
+      }
+
+      50% {
+        opacity: 1;
+      }
+
+      100% {
+        opacity: 0;
+        -moz-transform: scale(1.5);
+      }
+
+    }
+  </style>
+</head>
+
+<body>
+  <div class="text-cont">
+    <h2 class="header">Welcome to <span style="color:var(--primaryColor)">Rex Server</span></h2>
+    <p class="text-basic">Your proxy server is live and ready to serve. However, no proxy configurations have been set yet.</p>
+    <h3 class="sub-header">What's next ?</h3>
+    <p class="text-basic">To start using Rex Proxy, set up your configurations:</p>
+    <ul style="margin-top: 1.5rem; padding-left: 1rem;">
+      <li ><b>Define Proxy Rules:</b> Specify backend servers or endpoints in the configuration file.</li>
+      <li ><b>Reload the Server:</b> Apply changes by reloading your proxy server.</li>
+      <li ><b>Start Routing Requests:</b> Enjoy seamless and efficient proxying!</li>
+      <p class="text-basic" style="margin-top: 1.5rem;"><a target="_blank" style="color:var(--primaryColor)" href="https://github.com/dev-raghvendramisra/Rex-Server">Check the Documentation</a> 📖 for step-by-step setup instructions.</p>
+    </ul>
+  </div>
+  
+  <div class="single">
+    <img style="position: absolute ; height: 100%; width: 100%; border:2px; border-color: 00C907;" src="Rex-Logo.png" />
+  </div>
+</body>
+
+</html>

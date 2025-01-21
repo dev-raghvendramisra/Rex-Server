@@ -15,7 +15,8 @@
       "@types": ["types/index"],
       "@worker": ["worker/index"],
       "@master": ["master/index"],
-      "@lib" :  ["lib/index"]
+      "@lib" :  ["lib/index"],
+      "@controller":["worker/server/controller/index"]
     }
   },
   "include": ["src/**/*"],
