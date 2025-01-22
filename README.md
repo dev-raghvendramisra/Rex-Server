@@ -1,4 +1,4 @@
-"# Rex Server - User Documentation
+# Rex Server - User Documentation
 
 ## Overview
 
