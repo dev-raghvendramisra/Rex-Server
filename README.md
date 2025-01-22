@@ -71,7 +71,7 @@ After installing Rex Server, you need to set up the configuration before running
 Run the following command to generate a default configuration file (`rex.config.yaml`).
 
 ```bash
-rex init
+rex --init
 ```
 
 This will create a `rex.config.yaml` file in your project's directory. The file will contain a basic configuration to get you started.
