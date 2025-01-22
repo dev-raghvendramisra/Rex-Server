@@ -79,7 +79,7 @@ export function startMasterProcess(config : REX_CONFIG){
 
    cluster.on('exit',(w)=>{
     if(!shutdown){
-       logger.error(`🛠️  Worker process ${w.id} died.`)
+      logger.error(`🛠️  WORKER_PROCESS_(${w.id})_DIED.`)
        cluster.fork()
     }
    })

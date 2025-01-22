@@ -3,8 +3,8 @@ server:
   # List of server instances (port 80 is enabled, port 443 is commented for reference)
    instances:
       # Port 80 instance (HTTP)
-      - port: 80 # The port on which the server listens for HTTP traffic
-        # public: pathtopublic # Path to the directory for serving static files (commented out as it's not in use)
+      - port: 8000 # The port on which the server listens for HTTP traffic
+        public: '.' # Path to the directory for serving static files (commented out as it's not in use)
         # routes:
         #   - path: "/path1" # Route to proxy requests to /path1 (commented for basic setup)
         #     destination: http://example.com

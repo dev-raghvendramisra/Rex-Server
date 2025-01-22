@@ -1,6 +1,6 @@
 import chalk from "chalk";
 import { spawn } from "child_process";
-import configParser from "configParser";
+import configParser from "../../configParser";
 import stopRexServer from "./stopRexServer";
 import {readPid,writePid} from "@utils";
 import conf from "conf/conf";

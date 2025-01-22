@@ -1,5 +1,5 @@
 export * from './cliUtils'
-export * from './pidUtils'
+export * from './processUtils'
 export * from './errUtils'
 export * from './IPCUtils'
 export * from './reqUtils'

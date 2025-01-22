@@ -1,12 +1,13 @@
 import proxyReq  from "../proxyReq";
 import { logger } from "@lib";
 import { createReqOptions } from "utils/reqUtils";
-import { Middleware } from "./../middlewareIntitializer";
+import { Middleware } from "../middlewareIntitializer";
+import { staticResponse } from "@utils";
 
-const upstreamReqHandler : Middleware = async({req,res,proxyURL,config,next})=>{
+const upstreamReqMiddleware : Middleware = async({req,res,proxyURL,config,next,err})=>{
   try {
       if(!config.upstream){
-        return next()
+        return next(err)
       }
       const upstream = config.upstream
       const nextUpstream = getNextUpstream(upstream,config.initUpstream as number)
@@ -14,9 +15,11 @@ const upstreamReqHandler : Middleware = async({req,res,proxyURL,config,next})=>{
       proxyReq(req,res,options,proxyURL,0)
       return nextUpstream
   } catch (error) {
-    logger.error(`Unexpected error occured in staticReqHandler ${error}`)
-    res.writeHead(500,"internal server error",{"content-type":"text/html"})
-    res.end("Internal server error")
+    logger.error(`UNEXPECTED_ERROR_OCCURED_IN_UPSTREAM_REQ_HANDLER ${error}`)
+    if(res.headersSent){
+       return res.end("Proxy Server error")
+    }
+    return staticResponse(res,503)
   }
 }
 
@@ -30,4 +33,4 @@ export function getNextUpstream(upstreams:string[],crrIndex:number){
   }
 }
 
-export default upstreamReqHandler
+export default upstreamReqMiddleware

@@ -5,16 +5,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-  <link rel="icon" type="image/png" href="favicon/favicon-96x96.png" sizes="96x96" />
-<link rel="icon" type="image/svg+xml" href="favicon/favicon.svg" />
-<link rel="shortcut icon" href="favicon/favicon.ico" />
-<link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg%20width%3D%22100%25%22%20height%3D%22100%25%22%20viewBox%3D%220%200%201151%201151%22%20fill%3D%22none%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Ccircle%20cx%3D%22575.5%22%20cy%3D%22575.5%22%20r%3D%22575.5%22%20fill%3D%22%23242424%22/%3E%3Cpath%20fill-rule%3D%22evenodd%22%20clip-rule%3D%22evenodd%22%20d%3D%22M217%20464C225.691%20555.144%20279.982%20633.896%20312.488%20655.133C344.995%20676.369%20428.808%20687.418%20533.94%20686.988C467.78%20572.437%20399.509%20523.078%20217%20464ZM934.441%20464C925.75%20555.144%20871.46%20633.896%20838.953%20655.133C806.446%20676.369%20722.633%20687.418%20617.501%20686.988C683.661%20572.437%20751.933%20523.078%20934.441%20464Z%22%20fill%3D%22%2300C907%22/%3E%3C/svg%3E">
   <title>Welcome to Rex-Server</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
 
     :root {
-      --primaryColor: #00C907
+      --primaryColor: #00C907;
+      --errorColor: #FF4C4C;
     }
     
     *{
@@ -158,8 +156,12 @@
   </div>
   
   <div class="single">
-    <img style="position: absolute ; height: 100%; width: 100%; border:2px; border-color: 00C907;" src="Rex-Logo.png" />
-  </div>
+    <div style="width: 100%; height: 100%; position: absolute;">
+        <svg width="100%" height="100%" viewBox="0 0 1151 1151" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="575.5" cy="575.5" r="575.5" fill="#242424"/>
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M217 464C225.691 555.144 279.982 633.896 312.488 655.133C344.995 676.369 428.808 687.418 533.94 686.988C467.78 572.437 399.509 523.078 217 464ZM934.441 464C925.75 555.144 871.46 633.896 838.953 655.133C806.446 676.369 722.633 687.418 617.501 686.988C683.661 572.437 751.933 523.078 934.441 464Z" fill="#00C907"/>
+         </svg>
+    </div>
 </body>
 
 </html>

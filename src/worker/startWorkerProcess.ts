@@ -4,7 +4,7 @@ import http,{Server as HttpServer} from 'http'
 import cluster, { Worker } from "cluster";
 import { formatObjects, logger } from "@lib";
 import {informMasterAboutEvt, workerReady } from "@utils";
-import { staticReqHandler,upstreamReqHandler,routeReqHandler, defaultController } from "@controller";
+import { staticReqMiddleware,upstreamReqMiddleware,routeReqMiddleware, fallbackMiddleware } from "worker/server/middleware";
 import MiddlewareIntitializer from "./server/middlewareIntitializer";
 
 /**
@@ -46,7 +46,7 @@ export function startWorkerProcess(config : REX_CONFIG){
             servers.push(httpsServer)
         }
         const httpServer = http.createServer(
-            MiddlewareIntitializer(config,server,staticReqHandler,routeReqHandler,upstreamReqHandler,defaultController)
+            MiddlewareIntitializer(config,server,staticReqMiddleware,routeReqMiddleware,upstreamReqMiddleware,fallbackMiddleware)
         )
         httpServer.listen(server.port,()=>{
             readyServers++
@@ -65,7 +65,7 @@ export function startWorkerProcess(config : REX_CONFIG){
                     data:err as NodeJsErr
                 }
             )
-            logger.error(`server error occured in worker ${cluster.worker?.id} ${err}`)
+            logger.error(`SERVER_ERROR_OCCURED_IN_WORKER ${cluster.worker?.id} ${err}`)
         })
 
     })
@@ -77,7 +77,7 @@ export function startWorkerProcess(config : REX_CONFIG){
                 data:err as NodeJsErr
             }
         )
-        logger.error(`uncaught exception found in worker ${cluster.worker?.id} ${formatObjects(err as Object)}`)
+        logger.error(`UNCAUGHT_EXCEPTION_FOUND_IN_WORKER ${cluster.worker?.id} ${formatObjects(err as Object)}`)
     })
 
     process.on('SIGTERM',()=>{

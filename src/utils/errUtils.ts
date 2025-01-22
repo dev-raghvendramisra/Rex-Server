@@ -1,5 +1,8 @@
-import { logger } from "@lib";
+import { formatObjects, logger } from "@lib";
+import { ReadStream } from "fs";
+import { IncomingMessage, ServerResponse } from "http";
 import { ErrorSchema } from "types/config.types";
+import { staticResponse } from "./resUtils";
 /**
 * Handles errors related to port binding, such as when a port is already in use or permission is denied.
 * 
@@ -70,12 +73,30 @@ export async function handleMemErr(err:unknown){
   try {
     const error = ErrorSchema.parse(err)
     if(error.code=="ENOMEM"){
-      logger.error(`Out of memory ${error.message}`)
+      logger.error(`OUT_OF_MEMORY ${error.message}`)
       return {
          needTermination:true
       }
     }
   } catch (error) {
-    logger.error(` Unexpected error: ${error}`);
+    logger.error(`UNEXPECTED_ERROR ${error}`);
   }
+}
+
+
+export function handleResPipingError(res : ServerResponse, fileStream : ReadStream | IncomingMessage, staticDir ?: string){
+  fileStream.on('error',(err : any)=>{
+    logger.error(`AN_UNEXPECTED_ERROR_OCCURED_WHILE_SENDING_THE_STATIC_FILE ${formatObjects(err)}`)
+         if(res.headersSent){
+           res.end("Proxy Server Error")
+         }
+          else {
+            staticResponse(res,503)
+         }
+        fileStream.destroy()
+  })
+
+  res.on('error',(err)=>{
+    logger.error(`CONNECTION_CLOSED_BY_THE_CLIENT ${formatObjects(err)}`)
+  })
 }

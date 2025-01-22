@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg%20width%3D%22100%25%22%20height%3D%22100%25%22%20viewBox%3D%220%200%201151%201151%22%20fill%3D%22none%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Ccircle%20cx%3D%22575.5%22%20cy%3D%22575.5%22%20r%3D%22575.5%22%20fill%3D%22%23242424%22/%3E%3Cpath%20fill-rule%3D%22evenodd%22%20clip-rule%3D%22evenodd%22%20d%3D%22M217%20464C225.691%20555.144%20279.982%20633.896%20312.488%20655.133C344.995%20676.369%20428.808%20687.418%20533.94%20686.988C467.78%20572.437%20399.509%20523.078%20217%20464ZM934.441%20464C925.75%20555.144%20871.46%20633.896%20838.953%20655.133C806.446%20676.369%20722.633%20687.418%20617.501%20686.988C683.661%20572.437%20751.933%20523.078%20934.441%20464Z%22%20fill%3D%22%2300C907%22/%3E%3C/svg%3E">
+    <title>Resource Not Found</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
+        :root {
+            --primaryColor: #00C907;
+            --errorColor: #FF4C4C;
+        }
+
+        * {
+            margin: 0;
+            text-decoration: none;
+        }
+
+        .roboto-font {
+            font-family: "Roboto", serif;
+            font-optical-sizing: auto;
+            font-weight: 600;
+            font-style: normal;
+            font-variation-settings:
+                "wdth" 100;
+        }
+
+        body {
+            font-family: Roboto;
+            background: rgb(31, 31, 31);
+            min-height: 100vh;
+            display: flex;
+            gap: 12rem;
+            color: whitesmoke;
+            flex-direction: initial;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+        }
+
+
+        .single {
+            width: 15rem;
+            height: 15rem;
+            background: rgb(82, 82, 82);
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            -moz-border-radius: 50%;
+            -webkit-border-radius: 50%;
+            border-radius: 50%;
+        }
+
+        .single::after {
+            content: "";
+            position: relative;
+            aspect-ratio: 1;
+            height: 120%;
+            border-radius: 50%;
+            box-shadow: 0 0 50px 2px var(--primaryColor);
+            top: 0%;
+            left: 0%;
+            z-index: -2;
+            opacity: 0;
+            -webkit-animation: halo 1s 0.5s infinite ease-out;
+            -moz-animation: halo 1s 0.5s infinite ease-out;
+            animation: halo 1s 0.5s infinite ease-out;
+        }
+
+        .header {
+            font-size: 4rem;
+        }
+
+        .sub-header {
+            font-size: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .text-basic {
+            font-size: 1.2rem;
+            margin-top: 0.5rem;
+        }
+
+        li {
+            margin-top: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        a:hover {
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
+        @media (max-width: 1024px) {
+            body {
+                flex-direction: column;
+                gap: 2rem;
+                padding-bottom: 2rem;
+            }
+
+            .text-cont {
+                margin-top: 2rem;
+                padding: 2rem;
+            }
+
+            .single {
+                height: 8rem;
+                width: 8rem;
+            }
+        }
+
+        @-webkit-keyframes halo {
+            0% {
+                opacity: 0;
+                -webkit-transform: scale(0.1);
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+                -webkit-transform: scale(1.2);
+            }
+        }
+
+        @-moz-keyframes halo {
+            0% {
+                opacity: 0;
+                -moz-transform: scale(0.1);
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+                -moz-transform: scale(1.5);
+            }
+
+        }
+    </style>
+</head>
+
+<body>
+    <div class="text-cont">
+        <h2 class="header"><span style="color:var(--errorColor)">404</span> - Not Found</h2>
+        <p class="text-basic">The requested resource could not be found on the server.</p>
+        <h3 class="sub-header">What's Next?</h3>
+        <ul>
+            <li><b>Check URL:</b> Ensure the URL is correct and try again.</li>
+            <li><b>Verify Routes:</b> Confirm that the route exists in your server configuration.</li>
+            <li><b>Define a Default Route:</b> Add a fallback route to handle unknown paths.</li>
+        </ul>
+        <p class="text-basic" style="margin-top: 1.5rem;"><a target="_blank" style="color:var(--primaryColor)"
+                href="https://github.com/dev-raghvendramisra/Rex-Server">Check the Documentation</a> 📖 for step-by-step
+            setup instructions.</p>
+    </div>
+
+    <div class="single">
+        <div style="width: 100%; height: 100%; position: absolute;">
+            <svg width="100%" height="100%" viewBox="0 0 1151 1151" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="575.5" cy="575.5" r="575.5" fill="#242424"/>
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M217 464C225.691 555.144 279.982 633.896 312.488 655.133C344.995 676.369 428.808 687.418 533.94 686.988C467.78 572.437 399.509 523.078 217 464ZM934.441 464C925.75 555.144 871.46 633.896 838.953 655.133C806.446 676.369 722.633 687.418 617.501 686.988C683.661 572.437 751.933 523.078 934.441 464Z" fill="#00C907"/>
+             </svg>
+        </div>
+</body>
+
+</html>

@@ -1,4 +1,4 @@
-import { REX_CONFIG, ServerInstance } from "@types";
+import { NodeJsErr, REX_CONFIG, ServerInstance } from "@types";
 import { IncomingMessage, ServerResponse } from "http";
 import { ProxyURL } from "@types";
 import { getURL } from "@utils";
@@ -9,7 +9,8 @@ type MiddlewareProps = {
   config: REX_CONFIG,
   proxyURL: ProxyURL,
   serverInstance:ServerInstance,
-  next: () => void
+  next: (err?:NodeJsErr) => void,
+  err ?: NodeJsErr
 }
 export type Middleware = (props : MiddlewareProps) => void;
 
@@ -20,10 +21,10 @@ export default function MiddlewareIntitializer(config:REX_CONFIG,serverInstance:
 
     let currentHandler = 0;
 
-    const next = () => {
+    const next = (err ?: NodeJsErr) => {
       currentHandler++;
       if (currentHandler < handlers.length) {
-        handlers[currentHandler]({req, res,config, proxyURL,serverInstance, next});
+        handlers[currentHandler]({req, res,config, proxyURL,serverInstance, next, err});
       }
     };
 
