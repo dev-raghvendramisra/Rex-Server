@@ -74,7 +74,7 @@ Run the following command to generate a default configuration file (`rex.config.
 rex --init
 ```
 
-This will create a `rex.config.yaml` file in your project's directory. The file will contain a basic configuration to get you started.
+This will create a `rex.config.yaml` file in your current working directory. The file will contain a basic configuration to get you started.
 
 ---
 
