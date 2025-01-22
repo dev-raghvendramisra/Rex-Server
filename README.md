@@ -1,4 +1,4 @@
-# Rex Server - User Documentation
+"# Rex Server - User Documentation
 
 ## Overview
 
@@ -76,6 +76,31 @@ rex --init
 
 This will create a `rex.config.yaml` file in your current working directory. The file will contain a basic configuration to get you started.
 
+### Customizing the Configuration
+
+Once you have the `rex.config.yaml` file, you can customize it to match your server's requirements. The configuration file defines how the server listens for requests, how it handles routing, and how workers are managed.
+
+Example of a basic configuration:
+
+```yml
+server:
+  instances:
+     - port: 80
+        routes:
+          - path: "/path1"
+             destination: http://example.com
+          - path: "/path2"
+             destination: http://example.com
+
+workers: auto
+```
+
+Key sections to modify:
+
+- **server.instances**: Define the ports the server listens to and the routing rules.
+- **workers**: Specify the number of worker processes, or use `auto` to automatically scale the number of workers based on the number of CPU cores.
+- **routes**: Configure URL paths to forward requests to different destinations.
+
 ---
 
 ## TL;DR of Configuration Flow
@@ -96,6 +121,120 @@ This flow ensures that Rex can handle both static file serving and dynamic routi
 
 ---
 
+## CLI Commands
+
+Rex Server provides a command-line interface (CLI) to manage your server. Here are the available commands:
+
+### `rex init`
+
+Initialize a new `rex.config.yaml` configuration file.
+
+```bash
+rex init
+```
+
+### `rex use <configPath>`
+
+Start the server using a specific configuration file (`rex.config.yaml`).
+
+```bash
+rex use /path/to/rex.config.yaml
+```
+
+Replace `/path/to/rex.config.yaml` with the actual path to your configuration file.
+
+### `rex start`
+
+Start the Rex server with the default configuration or a custom configuration if provided.
+
+```bash
+rex start
+```
+
+### `rex stop`
+
+Stop the currently running Rex server.
+
+```bash
+rex stop
+```
+
+You can also manually specify the process ID (`PID`) to stop the server using:
+
+```bash
+rex stop -p <processId>
+```
+
+---
+
+## Starting the Server
+
+Once you've set up the configuration, you can start the server using the following command:
+
+### Using the Default Configuration
+
+```bash
+rex start
+```
+
+This will start the server with the default configuration.
+
+### Using a Custom Configuration
+
+```bash
+rex use /path/to/your/custom/config.yaml
+```
+
+Replace `/path/to/your/custom/config.yaml` with the actual path to your configuration file.
+
+---
+
+## Stopping the Server
+
+To stop the server, you can run:
+
+```bash
+rex stop
+```
+
+If the server is running, this will safely stop it. You can also specify the PID manually:
+
+```bash
+rex stop -p <processId>
+```
+
+---
+
+## Understanding the Configuration File
+
+The configuration file is a YAML file (`rex.config.yaml`) that controls how Rex Server behaves. Below is an explanation of the key parts of the configuration.
+
+### Example Configuration File
+
+```yml
+server:
+  instances:
+     - port: 80
+        routes:
+          - path: "/path1"
+             destination: http://example.com
+          - path: "/path2"
+             destination: http://example.com
+
+workers: auto
+```
+
+#### server.instances
+This section defines the server instances and the ports they will listen on. Each instance can have different routes that map specific paths to upstream servers.
+
+- **port**: The port the server will listen to (e.g., `80` for HTTP, `443` for HTTPS).
+- **routes**: Define paths that will be proxied to other servers. You can specify the destination for each path.
+
+#### workers
+The `workers` field defines the number of worker processes to use. If set to `auto`, the number of workers will be automatically determined based on the number of CPU cores.
+
+---
+
 ## Error Handling
 
 ### Error Pages (e.g., 404, 503, 502)
@@ -113,3 +252,38 @@ When you encounter error pages like **404**, **503**, or **502**, here's what th
 - **404 Not Found**:  
   A **404** error indicates that the requested resource could not be found in the `public` directory or defined routes.  
   **Action**: Check the configuration for missing files or incorrect routes.
+
+---
+
+### Invalid Configuration Errors
+
+Rex Server validates its configuration using the **Zod schema validation library**. If the configuration is invalid, detailed Zod validation errors will describe the issue.  
+
+#### Example Error:
+```
+Invalid config file syntax: Path "server.instances[0].port" must be between 0 and 65535.
+```
+
+#### Action:
+- Review the error message to identify the issue.
+- Refer to the [Zod documentation](https://zod.dev) for more details on validation rules and errors.
+
+---
+
+## Common Troubleshooting
+
+### "Port Already In Use"
+If the error message indicates that the port is already in use, Rex will attempt to shut down the conflicting process. If it doesn't succeed, ensure no other services are using the port, or choose a different port in the configuration.
+
+### "Permission Denied"
+When running the server on ports below 1024 (such as 80 or 443), you may need to grant permissions to the `node` process on Linux:
+
+```bash
+sudo setcap cap_net_bind_service=+ep $(which node)
+```
+
+---
+
+## Conclusion
+
+Rex Server is a powerful and flexible reverse proxy server that makes it easy to manage traffic, handle requests, and scale your application with worker processes. If you need further assistance, visit the [GitHub repository](https://github.com/dev-raghvendramisra/Rex-Server).
