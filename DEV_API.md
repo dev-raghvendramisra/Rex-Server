@@ -1,3 +1,7 @@
+
+<img src="src/root/static/Rex-Logo.png" height="150"/>
+
+
 # Rex Server - Developer Documentation
 
 ## Table of Contents
