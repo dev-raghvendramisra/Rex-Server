@@ -149,7 +149,7 @@ Replace `/path/to/rex.config.yaml` with the actual path to your configuration fi
 
 ### `rex start`
 
-Start the Rex server with the default configuration or a custom configuration if provided.
+Start the Rex server with the default configuration.
 
 ```bash
 rex start
@@ -181,7 +181,7 @@ Once you've set up the configuration, you can start the server using the followi
 rex start
 ```
 
-This will start the server with the default configuration.
+This will start the server with default configuration.
 
 ### Using a Custom Configuration
 
