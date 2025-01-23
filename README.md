@@ -2,7 +2,7 @@
 <img src="src/root/static/Rex-Logo.png" height="150"/>
 
 
-# Rex Server - User Documentation
+"# Rex Server - User Documentation
 
 ## Overview
 
@@ -149,7 +149,7 @@ Replace `/path/to/rex.config.yaml` with the actual path to your configuration fi
 
 ### `rex start`
 
-Start the Rex server with the default configuration.
+Start the Rex server with the default configuration or a custom configuration if provided.
 
 ```bash
 rex start
@@ -181,7 +181,7 @@ Once you've set up the configuration, you can start the server using the followi
 rex start
 ```
 
-This will start the server with default configuration.
+This will start the server with the default configuration.
 
 ### Using a Custom Configuration
 
@@ -264,11 +264,56 @@ When you encounter error pages like **404**, **503**, or **502**, here's what th
 Rex Server validates its configuration using the **Zod schema validation library**. If the configuration is invalid, detailed Zod validation errors will describe the issue.  
 
 #### Example Error:
+
+#### Example Error:
+```json
+{
+  "code": "invalid_type",
+  "expected": "array",
+  "received": "object",
+  "path": [
+    "server",
+    "instances"
+  ],
+  "message": "Expected array, received object"
+}
 ```
-Invalid config file syntax: Path "server.instances[0].port" must be between 0 and 65535.
+The above error could occur if the config is something like this :
+
+```yml
+server:
+  instances:
+    port: 80
+    routes:
+      - path: "/path1"
+        destination: http://example.com
+      - path: "/path2"
+        destination: http://example.com
+
+workers: auto
 ```
 
 #### Action:
+- **Error Explanation**: The error indicates that the `instances` field under `server` is expected to be an array, but an object was provided instead.
+- **Solution**: Modify the configuration to ensure `instances` is an array. Here is the corrected configuration:
+
+```yml
+server:
+  instances:
+    - port: 80
+      routes:
+        - path: "/path1"
+          destination: http://example.com
+        - path: "/path2"
+          destination: http://example.com
+
+workers: auto
+```
+
+- **Validation**: Ensure that all fields match the expected types as defined by the Zod schema.
+- **Reference**: Refer to the [Zod documentation](https://zod.dev) for more details on validation rules and errors.
+
+
 - Review the error message to identify the issue.
 - Refer to the [Zod documentation](https://zod.dev) for more details on validation rules and errors.
 
@@ -280,10 +325,29 @@ Invalid config file syntax: Path "server.instances[0].port" must be between 0 an
 If the error message indicates that the port is already in use, Rex will attempt to shut down the conflicting process. If it doesn't succeed, ensure no other services are using the port, or choose a different port in the configuration.
 
 ### "Permission Denied"
-When running the server on ports below 1024 (such as 80 or 443), you may need to grant permissions to the `node` process on Linux:
+When running the server on ports below 1024 (such as 80 or 443), you may need to grant permissions to the `node` process.
+
+#### On Linux
+Use the following command to grant the necessary permissions:
 
 ```bash
 sudo setcap cap_net_bind_service=+ep $(which node)
+```
+
+#### On Windows
+Running on ports below 1024 typically requires administrator privileges. Start your terminal as an administrator and run the server.
+
+#### On macOS
+Use the following command to grant the necessary permissions:
+
+```bash
+sudo npx setcap cap_net_bind_service=+ep $(which node)
+```
+
+If `setcap` is not available, you may need to install it using `brew`:
+
+```bash
+brew install libcap
 ```
 
 ---
@@ -291,3 +355,4 @@ sudo setcap cap_net_bind_service=+ep $(which node)
 ## Conclusion
 
 Rex Server is a powerful and flexible reverse proxy server that makes it easy to manage traffic, handle requests, and scale your application with worker processes. If you need further assistance, visit the [GitHub repository](https://github.com/dev-raghvendramisra/Rex-Server).
+
