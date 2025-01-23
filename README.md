@@ -2,7 +2,7 @@
 <img src="src/root/static/Rex-Logo.png" height="150"/>
 
 
-"# Rex Server - User Documentation
+# Rex Server - User Documentation
 
 ## Overview
 
