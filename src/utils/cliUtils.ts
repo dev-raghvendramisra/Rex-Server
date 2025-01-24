@@ -2,12 +2,13 @@ import fs from 'fs/promises'
 import {parse} from 'yaml'
 import {configSchema} from '@types'
 import conf from 'conf/conf'
-import { access, readFileSync} from 'fs'
+import { access, createReadStream, createWriteStream, readFileSync} from 'fs'
 import { formatObjects } from '@lib'
 import { exec } from 'child_process';
 import os from 'os';
 import { REX_CONFIG } from "@types";
 import path from 'path'
+import chalk from 'chalk'
 
 /**
  * Parses the command-line arguments to extract the configuration.
@@ -186,3 +187,35 @@ export  function checkFilesAccessibilty(path : string, errMsg : string){
 
 
 
+
+export function fileExporter(sourceFilePath:string,destinationFileName:string,onClose ?: (destinationFilePath : string)=>void, onError ?:(err : any)=>void, onReady ?: ()=>void){
+    try {
+    const cwd = process.cwd()
+    const destinationFile = createWriteStream(cwd+`/${destinationFileName}`);
+    const sourceFile = createReadStream(sourceFilePath);
+    sourceFile.pipe(destinationFile)
+    destinationFile.on('close',()=>{
+        if(onClose){
+            return onClose(destinationFile.path as string)
+        }
+        console.log(chalk.greenBright(`\n> FILE GENERATED SUCCESSFULLY !\n`))
+    })
+    destinationFile.on('ready',()=>{
+        if(onReady){
+            return onReady()
+        }
+        console.log(chalk.yellowBright("\n> Generating file ..."))
+    })
+    sourceFile.on('error',(err:any)=>{
+        if(onError){
+            return onError(err)
+        }
+        if(err.code == "ENOENT"){
+            return console.log(chalk.redBright("\n> Source file is missing\n> Consider reinstalling Rex-Server\n")) 
+        }
+        else throw new Error(err)
+    })
+    } catch (error : any) {
+       return console.log(chalk.redBright("> Unexpected error occured while generating the file\n> Please report this issue here https://github.com/dev-raghvendramisra/Rex-Server/issues"))
+    }
+}

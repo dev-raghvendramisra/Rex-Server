@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { Command } from "commander";
-import { initializeRexConfig, startRexServer } from "./actions";
+import { initializeRexConfig, startRexServer, streamServerLogs, testConfig } from "./actions";
 import stopRexServer from "./actions/stopRexServer";
 import conf from "conf/conf";
 import chalk from "chalk";
@@ -84,6 +84,21 @@ program
      */
     stopRexServer(options, conf.MASTER_PID_PATH);
   });
+
+
+  program
+    .command("log")
+    .option("-e, --export", "It will create a log file named <server.log> in your current working directory which will contain all the logs")
+    .description("Display or export the server logs.")
+    .action((options)=>{
+       streamServerLogs(options)
+    }) 
+
+  program
+    .command("test")
+    .option("-p, --path <configPath>", "Path to the configuration file to test")
+    .description("Test the configuration before starting the server to ensure safe start")
+    .action(testConfig);
 
 // Parse command line arguments and execute the appropriate command
 program.parse(process.argv);

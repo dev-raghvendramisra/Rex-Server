@@ -96,7 +96,7 @@ export function startMasterProcess(config : REX_CONFIG){
     }
    })
 
-   logger.info("\n🧠 Master process started")
+   logger.info("🧠 Master process started")
 
    process.on('SIGTERM', () => {
       shutdown=true
