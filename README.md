@@ -121,15 +121,24 @@ Example of a basic configuration:
 ```yml
 server:
   instances:
-     - port: 80
-        routes:
-          - path: "/path1"
-             destination: http://example.com
-          - path: "/path2"
-             destination: http://example.com
+    - port: 80
+      public: "/absolute/path/to/your/public/directory"
+      routes:
+        - path: "/path1"
+          destination: http://example.com
+        - path: "/path2"
+          destination: http://example.com
+      sslConfig:
+        cert: "/absolute/path/to/ssl/certificate"
+        key: "/absolute/path/to/ssl/key"
 
 workers: auto
 ```
+
+**Important Notes**:
+1. The `public` directory path **must be an absolute path** to ensure the server can locate the directory correctly.
+2. SSL configuration (`cert` and `key`) **must also use absolute paths**. Ensure that the SSL certificate and key files are accessible to the Rex Server process.
+3. Use proper permissions to allow the server to read these files.
 
 Key sections to modify:
 

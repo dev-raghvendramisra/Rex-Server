@@ -7,7 +7,7 @@ const conf = {
     ENTRY_POINT_PATH : path.resolve(__dirname,'..','index.js'),
     MOCK_CONFIG_PATH : path.resolve(__dirname,'../root','mock.rex.config.yaml'),
     STATIC_DIR_PATH : path.resolve(__dirname,'../root','static'),
-    REX_VERSION : "1.2.6"
+    REX_VERSION : "1.2.7"
 } as const
 
 export default conf
