@@ -53,13 +53,13 @@ export function startWorkerProcess(config: REX_CONFIG) {
           )
         );
 
-        httpsServer.listen(server.port, () => {
+       httpsServer.listen(server.port, () => {
           readyServers++;
           if (readyServers == serverInstances.length) {
             workerReady(cluster.worker as Worker);
           }
         });
-        servers.push(httpsServer);
+       return servers.push(httpsServer);
       }
       const httpServer = http.createServer(
         MiddlewareIntitializer(
@@ -103,20 +103,25 @@ export function startWorkerProcess(config: REX_CONFIG) {
     });
   });
 
-  process.on("uncaughtException", (err: unknown) => {
-    informMasterAboutEvt<IPCERRMessage>({
-      type: "error",
-      data: err as NodeJsErr,
-    });
-    logger.error(
-      `UNCAUGHT_EXCEPTION_FOUND_IN_WORKER ${cluster.worker?.id} ${formatObjects(
-        err as Object
-      )}`
-    );
-  });
-
-  process.on("SIGTERM", () => {
-    logger.warn(`🛠️  Worker process ${cluster.worker?.id} shutting down ..`);
-    process.exit();
-  });
 }
+
+
+
+
+
+process.on("uncaughtException", (err: unknown) => {
+  informMasterAboutEvt<IPCERRMessage>({
+    type: "error",
+    data: err as NodeJsErr,
+  });
+  logger.error(
+    `UNCAUGHT_EXCEPTION_FOUND_IN_WORKER ${cluster.worker?.id} ${formatObjects(
+      err as Object
+    )}`
+  );
+});
+
+process.on("SIGTERM", () => {
+  logger.warn(`🛠️  Worker process ${cluster.worker?.id} shutting down ..`);
+  process.exit(0);
+});

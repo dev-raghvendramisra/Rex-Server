@@ -1,105 +1,115 @@
 import { IPCERRMessage, IPCINFOMessage, IPCINFOMessgeName, REX_CONFIG } from "@types";
 import cluster from "cluster";
-import {cpus} from 'os'
+import { cpus } from "os";
 import { terminateMasterProcess } from "./terminateMasterProcess";
 import { handleMemErr, handlePortErr, handleSSlErr, informParentAboutEvt, rexServerReady } from "@utils";
 import { logger } from "@lib";
 
-
 /**
- * Starts the master process of the Rex server, which is responsible for managing worker processes.
- * The master process forks a number of worker processes based on the server configuration, 
- * handles incoming messages from workers, and handles shutdowns in case of errors.
+ * Initializes and starts the master process of the Rex server.
  * 
- * @param {REX_CONFIG} config - The configuration for the server, including the number of workers and the ports to listen on.
+ * The master process is responsible for:
+ * - Forking worker processes based on the configuration.
+ * - Handling inter-process communication (IPC) messages from worker processes.
+ * - Managing worker lifecycle, including restarting them in case of unexpected exits.
+ * - Gracefully shutting down all processes in response to critical errors or termination signals.
  * 
- * @throws {Error} Will throw an error if a worker process fails to start or the configuration is invalid.
+ * @param {REX_CONFIG} config - The server configuration object containing:
+ *   - `workers`: Number of worker processes to fork (`"auto"` for CPU count-based determination).
+ *   - `server`: Server-specific details like instances, routes, and upstreams.
+ * 
+ * @throws {Error} Will terminate the master process if workers fail to start due to critical errors (e.g., port conflicts, SSL issues, or memory errors).
  * 
  * @example
  * startMasterProcess({
- *   server: { listen: [80] },
  *   workers: "auto",
- *   upstream: { servers: [{ host: 'http://localhost:8000' }] }
+ *   server: { instances: [{ port: 80 }] },
+ *   upstream: ["http://localhost:8000"],
  * });
  */
+export function startMasterProcess(config: REX_CONFIG) {
+  const workerCount = config.workers === "auto" ? cpus().length : config.workers;
+  let shutdown = false; // Tracks if the system is in shutdown mode
+  let readyWorkers = 0; // Tracks the number of workers ready to handle requests
 
+  // Fork worker processes based on the configuration
+  for (let i = 0; i < workerCount; i++) {
+    cluster.fork();
+  }
 
-export function startMasterProcess(config : REX_CONFIG){
-   const workerCount =  config.workers == "auto" ? cpus().length : config.workers
-   let shutdown = false;
-   let readyWorkers = 0;
+  // Log when a worker becomes online
+  cluster.on("online", (worker) => {
+    logger.info(`🛠️  Worker process ${worker.id} started`);
+  });
 
-   for(let i=0;i<workerCount;i++){
-      cluster.fork()
-   }
+  // Handle IPC messages from workers
+  cluster.on("message", async (worker, message: IPCERRMessage | IPCINFOMessage) => {
+    if (message.type === "error") {
+      const error = message.data;
 
-   cluster.on('online',(w)=>{
-      logger.info(`🛠️  Worker process ${w.id} started`)
-   })
+      // Handle port-related errors
+      const portError = await handlePortErr(error);
+      if (portError && portError.needTermination) {
+        shutdown = true;
+        informParentAboutEvt<IPCERRMessage>({
+          type: "error",
+          data: {
+            code: error.code,
+            message: `REX-STARTUP-FAILED\n>${portError.errMsg}`,
+          },
+        });
+        return terminateMasterProcess(cluster);
+      }
 
-   
+      // Handle memory-related errors
+      const memError = await handleMemErr(error);
+      if (memError && memError.needTermination) {
+        shutdown = true;
+        return terminateMasterProcess(cluster);
+      }
 
-   cluster.on('message',async(worker,message:IPCERRMessage | IPCINFOMessage)=>{
-       if(message.type=="error"){
-         const error = message.data
-         const portError = await handlePortErr(error)
-         if(portError && portError.needTermination){
-            shutdown = true
-            informParentAboutEvt<IPCERRMessage>({
-               type:"error",
-               data:{
-                  code:error.code,
-                  message:`REX-STARTUP-FAILED\n>${portError.errMsg}`
-               }
-            })
-            return terminateMasterProcess(cluster)
-         }
-         const memError = await handleMemErr(error)
-         if(memError && memError.needTermination){
-            shutdown=true
-            return terminateMasterProcess(cluster)
-         }
-         const sslError = await handleSSlErr(error)
-         if(sslError && sslError.needsTermination){
-            shutdown=true
-            informParentAboutEvt<IPCERRMessage>({
-               type:"error",
-               data:{
-                  code : error.code,
-                  message:`REX-STARTUP-FAILED\n${sslError.errMsg}`
-               }
-            })
-            return terminateMasterProcess(cluster)
-         }
-         else worker.kill('SIGTERM') 
-       }
-       else{
-          if(message.name==IPCINFOMessgeName.RESTART){
-            worker.kill('SIGTERM')
-          }
-          else if(message.name==IPCINFOMessgeName.READY){
-              readyWorkers++;
-              if(readyWorkers == workerCount){
-                rexServerReady()
-              }
-          }
-       }
+      // Handle SSL-related errors
+      const sslError = await handleSSlErr(error);
+      if (sslError && sslError.needTermination) {
+        shutdown = true;
+        informParentAboutEvt<IPCERRMessage>({
+          type: "error",
+          data: {
+            code: error.code,
+            message: `REX-STARTUP-FAILED\n>${sslError.errMsg}`,
+          },
+        });
+        return terminateMasterProcess(cluster);
+      }
 
-   })
-
-
-
-   cluster.on('exit',(w)=>{
-    if(!shutdown){
-      logger.error(`🛠️  WORKER_PROCESS_(${w.id})_DIED.`)
-       cluster.fork()
+      // Terminate the worker process for non-critical errors
+      worker.kill("SIGTERM");
+    } else {
+      // Handle successful worker initialization and readiness
+      if (message.name === IPCINFOMessgeName.RESTART) {
+        worker.kill("SIGTERM");
+      } else if (message.name === IPCINFOMessgeName.READY) {
+        readyWorkers++;
+        if (readyWorkers === workerCount) {
+          rexServerReady(); // Signal that all workers are ready
+        }
+      }
     }
-   })
+  });
 
-   logger.info("🧠 Master process started")
+  // Handle worker exits and restart them if necessary
+  cluster.on("exit", (worker) => {
+    if (!shutdown) {
+      logger.error(`🛠️  WORKER_PROCESS_(${worker.id})_DIED.`);
+      cluster.fork();
+    }
+  });
 
-   process.on('SIGTERM', () => {
-      shutdown=true
-      terminateMasterProcess(cluster)
-    });
+  logger.info("🧠 Master process started");
+
+  // Handle termination signals to gracefully shut down
+  process.on("SIGTERM", () => {
+    shutdown = true;
+    terminateMasterProcess(cluster);
+  });
 }
