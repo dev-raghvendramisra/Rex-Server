@@ -1,6 +1,6 @@
 {
   "name": "rex-server",
-  "version": "1.2.8",
+  "version": "1.2.81",
   "description": "Rex Server is a Node.js-based reverse proxy server available as an npm package. It allows you to handle HTTP and HTTPS traffic, route requests to upstream servers, and manage worker processes efficiently. With its CLI interface, Rex makes it easy to configure and run a proxy server with custom settings.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -27,13 +27,13 @@
   "license": "MIT",
   "devDependencies": {
     "@types/node": "^22.10.6",
+    "@types/mime-types": "^2.1.4",
     "nodemon": "^3.1.9",
     "ts-node": "^10.9.2",
     "tsc-alias": "^1.8.10",
     "typescript": "^5.7.3"
   },
   "dependencies": {
-    "@types/mime-types": "^2.1.4",
     "chalk": "^4.1.2",
     "commander": "^13.0.0",
     "mime-types": "^2.1.35",
