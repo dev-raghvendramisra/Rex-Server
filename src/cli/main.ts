@@ -17,14 +17,17 @@ const program = new Command();
 // Setting up the CLI program
 program
   .name("rex")
-  .option("-i, --init","Initialize a new rex.config.yaml, which can be used to start the Rex Server")
-  .action((options)=>{
-    if(options?.init){
-      initializeRexConfig()
-    }
-  })
   .description("A CLI tool to manage the Rex server.")
-  .version("1.0.0");
+  .version(conf.REX_VERSION)
+  .option("-i, --init", "Initialize a new rex.config.yaml, which can be used to start the Rex Server")
+  .action((options) => {
+    if (options?.init) {
+      initializeRexConfig();
+    } else {
+      console.log("Welcome to Rex CLI! Use 'rex --help' to see available commands.");
+    }
+  });
+
 // Command to start the Rex server with a custom configuration file
 program
   .command("use")
@@ -80,7 +83,6 @@ program
      */
     stopRexServer(options, conf.MASTER_PID_PATH);
   });
-
 
 // Parse command line arguments and execute the appropriate command
 program.parse(process.argv);

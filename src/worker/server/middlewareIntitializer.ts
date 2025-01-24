@@ -17,8 +17,12 @@ export type Middleware = (props : MiddlewareProps) => void;
 
 export default function MiddlewareIntitializer(config:REX_CONFIG,serverInstance:ServerInstance,...handlers: Array<Middleware>) {
   return (req: IncomingMessage, res: ServerResponse) => {
-    const proxyURL = getURL(req.headers.host as string,req.url);
-
+    if(req.socket.localPort==80 && config.server.instances.find((instance)=>instance.port==443)){
+      res.writeHead(301,{"location":`https://${req.headers.host}${req.url}`})
+      res.end("Go secure!")
+    }
+    
+    const proxyURL = getURL(req,req.url);
     let currentHandler = 0;
 
     const next = (err ?: NodeJsErr) => {

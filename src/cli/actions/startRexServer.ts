@@ -1,11 +1,10 @@
 import chalk from "chalk";
 import { spawn } from "child_process";
-import configParser from "../../configParser";
+import {configParser} from "@utils";
 import stopRexServer from "./stopRexServer";
 import {readPid,writePid} from "@utils";
 import conf from "conf/conf";
 import {IPCINFOMessgeName } from "@types";
-import path from "path";
 
 /**
  * Starts the Rex server, ensuring that any previously running instance is stopped before starting a new one.

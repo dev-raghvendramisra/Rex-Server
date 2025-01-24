@@ -1,4 +1,4 @@
-import { ClientRequest, IncomingMessage, OutgoingHttpHeader, RequestListener, ServerResponse } from "http";
+import { ClientRequest, IncomingMessage, ServerResponse } from "http";
 import { request as httpsRequest, RequestOptions } from "https";
 import { request as httpRequest } from "http";
 import { URL } from "url";
@@ -13,7 +13,7 @@ import { access } from "fs/promises";
 export function createReqOptions(req : IncomingMessage,proxyURL:URL,destination:string) : RequestOptions{
     let destURL = getURL(destination)
     const options : RequestOptions = {
-        headers:getReqHeaders(req),
+        headers:{...getReqHeaders(req),host:destURL.host},
         method:req.method,
         port:destURL.protocol=="https:"?443:destURL.port || 80,
         host:destURL.host,
@@ -45,10 +45,18 @@ export function createHttpsReq(options:RequestOptions,reqHandler:(res:IncomingMe
    }
  }
 
- export function getURL(url:string,path?:string){
-     if(url.startsWith("localhost")){
-        url=`http://${url}`
+ export function getURL(req:IncomingMessage | string,path?:string){
+     let url : string
+     if(typeof req == "string"){
+       if(req.startsWith("localhost")){
+          url = `http://${req}`
+       }
+       else url = req
      }
+     else {
+        url = req.socket instanceof TLSSocket ? `https://${req.headers.host}` : `http://${req.headers.host}`
+     }
+     logger.info(`generated url ${formatObjects(url)}`)
      return new ProxyURL(url,path)
  }
 

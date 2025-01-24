@@ -1,6 +1,4 @@
 import {z} from 'zod'
-import { URL } from 'url';
-
 /**
  * Defines and validates the schema for the Rex server configuration using the Zod validation library.
  * 
@@ -53,45 +51,7 @@ export const configSchema = z.object({
     initUpstream : z.number().optional()
 })
 
-export interface IPCERRMessage{
-    type:"error"
-    data:NodeJsErr
-}
 
-export enum IPCINFOMessgeName {
-    RESTART = "RESTART",
-    READY = "READY",
-    
-}
-export interface IPCINFOMessage{
-    type:"info"
-    name:IPCINFOMessgeName,
-    message:string
-}
-
-export const ErrorSchema = z.object({
-  code: z.string(),
-  errno:z.number().optional(),
-  syscall:z.string().optional(),
-  message: z.string().optional(),
-  stack: z.string().optional(),
-  port: z.number().optional(),
-  address: z.union([z.string(),z.null()]).optional(),
-});
-
-export class ProxyURL extends URL {
-  urlString : string
-  constructor(baseUrl:string,path?:string){
-      if(path){
-          super(path,baseUrl)
-      }
-      else super(baseUrl)
-      this.urlString = baseUrl
-  }
-}
-
-
-export type NodeJsErr = z.infer<typeof ErrorSchema>
 export type ServerInstance = z.infer<typeof serverInstanceSchema>
 export type REX_CONFIG = z.infer<typeof configSchema>
 export type Routes = z.infer<typeof routesSchema>

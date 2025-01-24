@@ -9,7 +9,7 @@
     "outDir": "dist",
     "strict": true,
     "skipLibCheck": true,
-    "baseUrl": "src",  // Base directory for resolving modules
+    "baseUrl": "src", 
     "paths": {
       "@utils": ["utils/index"],
       "@types": ["types/index"],
@@ -17,8 +17,9 @@
       "@master": ["master/index"],
       "@lib" :  ["lib/index"],
       "@controller":["worker/server/controller/index"]
-    }
-  },
+    },
+    "declaration": true
+,  },
   "include": ["src/**/*"],
   "exclude": ["node_modules"]
 }

@@ -6,26 +6,39 @@
 
 ## Overview
 
-Rex Server is a Node.js-based reverse proxy server available as an npm package. It allows you to handle HTTP and HTTPS traffic, route requests to upstream servers, and manage worker processes efficiently. With its CLI interface, Rex makes it easy to configure and run a proxy server with custom settings.
+Rex Server is a Node.js-based reverse proxy server/load-balancer available as an npm package. It allows you to handle HTTP and HTTPS traffic, route requests to upstream servers, and manage worker processes efficiently. With its CLI interface, Rex makes it easy to configure and run a proxy server with custom settings.
 
-### Rex Server Architecture
+## Master-Worker Architecture
 
-Rex Server is designed around a **Reverse Proxy** architecture, with the following key components:
+Rex Server is built on a master-worker architecture powered by Node.js's `cluster` module. The master process is responsible for managing and supervising all worker processes. It handles tasks like spawning, restarting workers in case of failure, and ensuring overall stability and load distribution.
 
-1. **Reverse Proxy Layer**:  
-    Rex acts as a reverse proxy, forwarding client requests to the appropriate backend services—whether that's static files, defined routes, or upstream servers.
+On the other hand, the worker processes do all the actual server-related tasks, such as handling client requests, serving static files, processing routes, and forwarding traffic to upstream servers. Each worker operates independently, ensuring high concurrency and efficient resource usage. This architecture enables Rex Server to scale seamlessly across multiple CPU cores, making it highly performant and resilient under heavy loads.
 
-2. **Request Handling and Middleware Layer**:  
-    Rex serves static files from the `public` directory, matches requests to configured routes, and forwards unmatched requests to upstream servers.
+By splitting responsibilities between the master and worker processes, Rex Server ensures fault tolerance, stability, and the ability to handle a large volume of concurrent requests.
 
-3. **Worker Process Management**:  
-    Rex scales automatically by using multiple worker processes to handle concurrent requests efficiently, ensuring high availability and resource optimization.
 
-4. **Load Balancing (Optional)**:  
-    If configured, Rex can distribute incoming requests to upstream servers, ensuring better load management.
+## Rex Server Architecture Overview
 
-5. **Logging and Monitoring**:  
-    Rex provides logging to track server events and errors and can integrate with monitoring tools.
+Rex Server is designed around a Reverse Proxy architecture, with the following key components:
+
+1. **Reverse Proxy Layer:**
+Rex acts as a reverse proxy, forwarding client requests to the appropriate backend services—whether that’s static files, defined routes, or upstream servers.
+
+
+2. **Request Handling and Middleware Layer:**
+Rex serves static files from the public directory, matches requests to configured routes, and forwards unmatched requests to upstream servers.
+
+
+3. **Worker Process Management:**
+Rex scales automatically by using multiple worker processes to handle concurrent requests efficiently, ensuring high availability and resource optimization.
+
+
+4. **Load Balancing (Optional):**
+If configured, Rex can distribute incoming requests to upstream servers, ensuring better load management.
+
+
+5. **Logging and Monitoring:**
+Rex provides logging to track server events and errors and can integrate with monitoring tools.
 
 ---
 
@@ -46,23 +59,34 @@ Rex Server is designed around a **Reverse Proxy** architecture, with the followi
 
 ## Installation
 
-To use Rex Server in your project, you need to install it as an npm package.
+Rex Server can be installed globally or locally, but it is **intended for global use** as a system-wide utility in production or any environment where a reverse proxy server is needed.
 
-### Step 1: Install Rex Server
+### Global Installation (Recommended)
 
-You can install Rex Server globally or as a local dependency in your project.
+To install Rex Server globally on your system, use the following command:
 
-#### Option 1: Global Installation
 ```bash
 npm install -g rex-server
 ```
 
-#### Option 2: Local Installation
+This command installs Rex Server as a global package, making the command accessible from any directory in your terminal or command prompt.
+
+### Local Installation (For Development or Testing)
+
+If you prefer to install Rex Server locally in your project directory (e.g., for development or testing), you can use the following command:
+
 ```bash
 npm install rex-server
 ```
 
-If installed locally, you can run Rex Server using `npx rex-server`.
+Since it is installed locally, you must prefix all CLI commands with `npx`;. For example:
+
+```bash
+npx rex --init
+npx rex start
+```
+
+**Note**: While local installation is supported, Rex Server is primarily designed as a global system utility for managing reverse proxy configurations across environments.
 
 ---
 
@@ -74,11 +98,19 @@ After installing Rex Server, you need to set up the configuration before running
 
 Run the following command to generate a default configuration file (`rex.config.yaml`).
 
+For a global installation:
 ```bash
-rex --init
+rex init
+```
+
+For a local installation:
+```bash
+npx rex init
 ```
 
 This will create a `rex.config.yaml` file in your current working directory. The file will contain a basic configuration to get you started.
+
+---
 
 ### Customizing the Configuration
 

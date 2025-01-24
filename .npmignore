@@ -1,3 +1,4 @@
 src
 *.tsbuildinfo
 tsconfig.json
+*.pem

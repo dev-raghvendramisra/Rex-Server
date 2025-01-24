@@ -6,7 +6,7 @@ import { getResHeaders, handleResPipingError, staticResponse } from "@utils";
 
 let maxRedirect = 5;
 
-export default async function proxyRequest(req:IncomingMessage,res:ServerResponse,options:RequestOptions, proxyURL : ProxyURL, crrRedirects=0){
+export default async function proxyRequest(req:IncomingMessage,res:ServerResponse,options:RequestOptions, proxyURL : ProxyURL, crrRedirects=0, onError?:(err : any,req : IncomingMessage,res:ServerResponse,proxyURL : ProxyURL)=>void){
   handleRedirects(maxRedirect,res,crrRedirects)
   let proxyReq : ClientRequest;
 
@@ -14,7 +14,7 @@ export default async function proxyRequest(req:IncomingMessage,res:ServerRespons
   const proxyReqHandler = (proxyRes:IncomingMessage)=>{
       if(proxyRes.headers.location && proxyRes.headers.location.includes("https")){
          const newOptions = createReqOptions(req,proxyURL,proxyRes.headers.location)
-         return proxyRequest(req,res,newOptions,proxyURL,crrRedirects)
+         return proxyRequest(req,res,newOptions,proxyURL,crrRedirects,onError)
       }
       res.writeHead(proxyRes.statusCode as number, proxyRes.statusMessage, getResHeaders(undefined,proxyRes))
       proxyRes.pipe(res)
@@ -27,13 +27,18 @@ export default async function proxyRequest(req:IncomingMessage,res:ServerRespons
   else{
    proxyReq = createHttpReq(options,proxyReqHandler)
   }
+  
    req.pipe(proxyReq)
+   
    proxyReq.on('error',(err : any)=>{
       logger.error(`ERROR_SENDING_PROXYREQ_FOR_${options.host} : ${err}`)
+      if(onError){
+         return onError(err,req,res,proxyURL)
+      }
       if(res.headersSent){
          res.end("Proxy server error")
       }
-      else if(err.code == "ECONNREFUSED" || err.code === 'ETIMEDOUT'){
+      else if(err.code == "ECONNREFUSED" || err.code === 'ETIMEDOUT' || err.code == "ENOTFOUND"){
          staticResponse(res,502)
       }
       

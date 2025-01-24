@@ -2,7 +2,7 @@ import { IPCERRMessage, IPCINFOMessage, IPCINFOMessgeName, REX_CONFIG } from "@t
 import cluster from "cluster";
 import {cpus} from 'os'
 import { terminateMasterProcess } from "./terminateMasterProcess";
-import { handleMemErr, handlePortErr, informParentAboutEvt, rexServerReady } from "@utils";
+import { handleMemErr, handlePortErr, handleSSlErr, informParentAboutEvt, rexServerReady } from "@utils";
 import { logger } from "@lib";
 
 
@@ -57,6 +57,18 @@ export function startMasterProcess(config : REX_CONFIG){
          const memError = await handleMemErr(error)
          if(memError && memError.needTermination){
             shutdown=true
+            return terminateMasterProcess(cluster)
+         }
+         const sslError = await handleSSlErr(error)
+         if(sslError && sslError.needsTermination){
+            shutdown=true
+            informParentAboutEvt<IPCERRMessage>({
+               type:"error",
+               data:{
+                  code : error.code,
+                  message:`REX-STARTUP-FAILED\n${sslError.errMsg}`
+               }
+            })
             return terminateMasterProcess(cluster)
          }
          else worker.kill('SIGTERM') 
