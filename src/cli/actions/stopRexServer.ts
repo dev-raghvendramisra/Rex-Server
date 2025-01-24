@@ -30,7 +30,7 @@ export default async function stopRexServer(options : any, masterProcessIdPath :
       }
 
       if (!PID) {
-          return console.log(chalk.yellowBright("\n> Rex Server is not running !\n"));
+          return console.log(chalk.yellowBright("\n> REX-SERVER IS NOT RUNNING !\n"));
       }
 
       process.kill(Number(PID), 'SIGTERM');

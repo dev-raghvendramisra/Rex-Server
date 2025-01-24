@@ -4,6 +4,7 @@ import { Command } from "commander";
 import { initializeRexConfig, startRexServer } from "./actions";
 import stopRexServer from "./actions/stopRexServer";
 import conf from "conf/conf";
+import chalk from "chalk";
 
 const program = new Command();
 
@@ -24,7 +25,7 @@ program
     if (options?.init) {
       initializeRexConfig();
     } else {
-      console.log("Welcome to Rex CLI! Use 'rex --help' to see available commands.");
+      console.log(chalk.greenBright("\nWelcome to Rex CLI! Use 'rex --help' to see available commands.\n"));
     }
   });
 
