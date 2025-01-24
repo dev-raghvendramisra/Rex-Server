@@ -128,10 +128,7 @@ server:
           destination: http://example.com
         - path: "/path2"
           destination: http://example.com
-      sslConfig:
-        cert: "/absolute/path/to/ssl/certificate"
-        key: "/absolute/path/to/ssl/key"
-
+      
 workers: auto
 ```
 
