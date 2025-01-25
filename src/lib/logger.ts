@@ -29,7 +29,7 @@ export const logger = winston.createLogger({
         format.printf((type) => `\n[${type.timestamp}] \n${type.level}: ${type.message}`)
       ),
     }),
-  ],
+  ]
 });
 
 /**

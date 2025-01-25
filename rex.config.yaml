@@ -1,0 +1,42 @@
+# Basic configuration file for Rex-Server
+server:
+  # List of server instances (port 80 is enabled, port 443 is commented for reference)
+  instances:
+    # Port 8000 instance (HTTP) only for development or testing, remove it in production
+    - port: 80 
+    # Port 80 instance (HTTP) this is standard HTTP traffic port open it for production
+    # - port: 80 # The port on which the server listens for standard HTTP traffic
+      # public: /absolute/path/to/your/public/directory # Path to the directory for serving static files (commented out as it's not in use)
+      # routes:
+      #   - path: "/path1" # Route to proxy requests to /path1 (commented for basic setup)
+      #     destination: http://example.com
+      #   - path: "/path2" # Route to proxy requests to /path2 (commented for basic setup)
+      #     destination: http://example.com
+
+    # Port 443 instance (HTTPS)
+    # This block is commented out because the setup focuses on HTTP for now.
+    # HTTPS can be enabled in the future for secure communication, requiring proper SSL certificates.
+    - port: 443 # The port on which the server listens for HTTPS traffic
+    #   public: /absolute/path/to/your/public/directory # Path to the directory for serving static files
+    #   routes:
+    #     - path: "/path1" # Route to proxy requests to /path1
+    #       destination: http://example.com
+    #     - path: "/path2" # Route to proxy requests to /path2
+    #       destination: http://example.com
+      sslConfig:
+        cert: /home/raghvendra/DUMP/Projects/Rex-Server/cert.pem # Path to the SSL certificate file
+        key: /home/raghvendra/DUMP/Projects/Rex-Server/key.pem          # Path to the SSL private key file
+
+# Worker configuration to handle requests
+workers: auto # Automatically determine the number of workers to use for handling traffic
+
+# Upstream server definitions for load balancing
+# upstream:
+#   # Backend server listening on port 8001
+#   - localhost:8001
+#   # Backend server listening on port 8002
+#   - localhost:8002
+#   # Backend server listening on port 8003
+#   - localhost:8003
+
+# For more information or queries regarding the configuration refer to docs : https://github.com/dev-raghvendramisra/Rex-Server

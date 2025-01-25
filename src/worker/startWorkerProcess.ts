@@ -103,25 +103,25 @@ export function startWorkerProcess(config: REX_CONFIG) {
     });
   });
 
+  process.on("uncaughtException", (err: unknown) => {
+    informMasterAboutEvt<IPCERRMessage>({
+      type: "error",
+      data: err as NodeJsErr,
+    });
+    logger.error(
+      `UNCAUGHT_EXCEPTION_FOUND_IN_WORKER ${cluster.worker?.id} ${formatObjects(
+        err as Object
+      )}`
+    );
+  });
+  
+  process.on("SIGTERM", () => {
+    logger.warn(`🛠️  Worker process ${cluster.worker?.id} shutting down ..`);
+    process.exit(0);
+  });
 }
 
 
 
 
 
-process.on("uncaughtException", (err: unknown) => {
-  informMasterAboutEvt<IPCERRMessage>({
-    type: "error",
-    data: err as NodeJsErr,
-  });
-  logger.error(
-    `UNCAUGHT_EXCEPTION_FOUND_IN_WORKER ${cluster.worker?.id} ${formatObjects(
-      err as Object
-    )}`
-  );
-});
-
-process.on("SIGTERM", () => {
-  logger.warn(`🛠️  Worker process ${cluster.worker?.id} shutting down ..`);
-  process.exit(0);
-});

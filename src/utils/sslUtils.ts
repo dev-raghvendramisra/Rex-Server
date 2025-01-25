@@ -1,5 +1,6 @@
 import { readFileSync } from "fs";
-import crypto from "crypto";
+import crypto, { X509Certificate } from "crypto";
+import { formatObjects, logger } from "@lib";
 
 /**
  * Retrieves the SSL configuration by reading the certificate and key files.
@@ -35,4 +36,25 @@ export function getSSLConfig(sslConfig: { cert: string; key: string }) {
     key,
     secureOptions: crypto.constants.SSL_OP_NO_SSLv2 | crypto.constants.SSL_OP_NO_SSLv3,
   };
+}
+
+/**
+ * Extracts the hostname from an SSL certificate file.
+ *
+ * @param certPath - The file path to the SSL certificate.
+ * @returns The hostname extracted from the certificate. If extraction fails, returns 'localhost'.
+ *
+ * @throws Will log an error and return 'localhost' if an error occurs during extraction.
+ */
+export function getHostnameFromSSL(certPath : string){
+  try {
+    const fullCert = readFileSync(certPath,'utf-8')
+    const websiteCert = fullCert.split("-----END CERTIFICATE-----")[0].trim()+"\n-----END CERTIFICATE-----"
+    const cert = new X509Certificate(websiteCert)
+    const hostname = cert.subject.split("CN=")[1]
+    return hostname || "localhost"
+  } catch (error) {
+    logger.error(`AN_ERROR_OCCURED_WHILE_EXTRACTING_HOST_FROM_CERT ${formatObjects(error as Object)}`)
+    return 'localhost'
+  }
 }

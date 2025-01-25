@@ -1,6 +1,6 @@
 import chalk from "chalk";
 import { spawn } from "child_process";
-import { configParser } from "@utils";
+import { configParser, getHostnameFromSSL } from "@utils";
 import stopRexServer from "./stopRexServer";
 import { readPid, writePid } from "@utils";
 import conf from "conf/conf";
@@ -68,11 +68,14 @@ export default async function startRexServer(masterPidPath: string, configPath?:
         if (message.name === IPCINFOMessgeName.READY) {
           console.log(chalk.greenBright("\n> REX-SERVER STARTUP COMPLETED SUCCESSFULLY"));
           console.log(chalk.cyanBright(`> Your Rex-Server is listening on:\n`))
+          let host = "localhost"
           config.server.instances.forEach((instance,idx)=>{
             if(instance.sslConfig){
-              console.log(chalk.cyanBright(`> https://localhost:${instance.port}`),"🛡️")
+              host = getHostnameFromSSL(instance.sslConfig.cert)
+              console.log(chalk.cyanBright(`> https://${host}:${instance.port}`))
             }
-            else console.log(chalk.cyanBright(`> http://localhost:${instance.port}`),`🚫${config.server.instances.length==idx+1 ? '\n':''}`)
+            else console.log(chalk.cyanBright(`> http://${host}:${instance.port}`))
+            config.server.instances.length==idx+1 && console.log("")
           })
           process.exit(0);
         }
