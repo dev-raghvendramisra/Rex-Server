@@ -2,8 +2,10 @@
 server:
   # List of server instances (port 80 is enabled, port 443 is commented for reference)
   instances:
-    # Port 80 instance (HTTP)
-    - port: 80 # The port on which the server listens for HTTP traffic
+    # Port 8000 instance (HTTP) only for development or testing, remove it in production
+    - port: 8000 
+    # Port 80 instance (HTTP) this is standard HTTP traffic port open it for production
+    # - port: 80 # The port on which the server listens for standard HTTP traffic
       # public: /absolute/path/to/your/public/directory # Path to the directory for serving static files (commented out as it's not in use)
       # routes:
       #   - path: "/path1" # Route to proxy requests to /path1 (commented for basic setup)

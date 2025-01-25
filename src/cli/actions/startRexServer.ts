@@ -4,7 +4,7 @@ import { configParser } from "@utils";
 import stopRexServer from "./stopRexServer";
 import { readPid, writePid } from "@utils";
 import conf from "conf/conf";
-import { IPCINFOMessgeName } from "@types";
+import { IPCINFOMessgeName, REX_CONFIG } from "@types";
 
 /**
  * Starts the Rex server, ensuring that any previously running instance is stopped before starting a new one.
@@ -36,7 +36,6 @@ export default async function startRexServer(masterPidPath: string, configPath?:
   if (!configPath) {
     configPath = conf.REX_CONFIG_PATH;
   }
-
   try {
     // Check for an existing master process
     const prevMasterPID = await readPid(masterPidPath);
@@ -50,7 +49,7 @@ export default async function startRexServer(masterPidPath: string, configPath?:
     }
 
     // Parse the configuration file
-    const config = await configParser(configPath);
+    const config = await configParser(configPath) as REX_CONFIG
     const jsonConfig = JSON.stringify(config);
 
     // Spawn the master process
@@ -67,7 +66,14 @@ export default async function startRexServer(masterPidPath: string, configPath?:
       const message = JSON.parse(data.toString().trim());
       if (message.type === "info") {
         if (message.name === IPCINFOMessgeName.READY) {
-          console.log(chalk.greenBright("\n> REX-SERVER STARTUP COMPLETED SUCCESSFULLY\n"));
+          console.log(chalk.greenBright("\n> REX-SERVER STARTUP COMPLETED SUCCESSFULLY"));
+          console.log(chalk.cyanBright(`> Your Rex-Server is listening on:\n`))
+          config.server.instances.forEach((instance,idx)=>{
+            if(instance.sslConfig){
+              console.log(chalk.cyanBright(`> https://localhost:${instance.port}`),"🛡️")
+            }
+            else console.log(chalk.cyanBright(`> http://localhost:${instance.port}`),`🚫${config.server.instances.length==idx+1 ? '\n':''}`)
+          })
           process.exit(0);
         }
       } else {

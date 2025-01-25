@@ -31,6 +31,7 @@ const config = parseCliArgs(args, '--config') as REX_CONFIG;
 
 if (cluster.isPrimary) {
   // Start master process
+  console.log("cluster is primary")
   startMasterProcess(config);
 } else {
   // Start worker process
