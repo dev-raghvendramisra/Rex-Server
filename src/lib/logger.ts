@@ -23,9 +23,7 @@ export const logger = winston.createLogger({
       filename: conf.LOG_FILE_PATH,
       level: "debug",
       format: format.combine(
-        format.timestamp({
-          format: () => new Date().toUTCString(),
-        }),
+        format.timestamp({format:'YYYY-MM-DD HH:mm:ss.SSS'}),
         format.printf((type) => `\n[${type.timestamp}] \n${type.level}: ${type.message}`)
       ),
     }),
