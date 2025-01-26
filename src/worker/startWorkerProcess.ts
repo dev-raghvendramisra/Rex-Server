@@ -9,8 +9,8 @@ import {
   upstreamReqMiddleware,
   routeReqMiddleware,
   fallbackMiddleware,
-} from "worker/server/middleware";
-import MiddlewareIntitializer from "./server/middlewareIntitializer";
+} from "server/middleware";
+import MiddlewareIntitializer from "../server/middlewareIntitializer";
 import { getSSLConfig } from "@utils";
 
 /**
