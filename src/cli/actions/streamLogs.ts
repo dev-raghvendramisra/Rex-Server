@@ -2,6 +2,7 @@ import { fileExporter } from "@utils";
 import chalk from "chalk";
 import { spawn } from "child_process";
 import conf from "conf/conf";
+import os from 'os'
 
 /**
  * Streams or exports server logs for the Rex server.It uses `fileExporter` utility to export the logs if the `-e` or `--export` flag is passed in command.
@@ -25,10 +26,17 @@ export default async function streamServerLogs(options: { export?: boolean }) {
     if (!options.export) {
       // Stream live server logs
       console.log(
-        chalk.yellowBright(`\n> Live streaming server logs, press 'ctrl/cmd + c to stop':\n`)
+        chalk.yellowBright(`\n> Live streaming server logs, press 'ctrl/cmd + z to stop':\n`)
       );
-      const logs = spawn("tail", ["-f", conf.LOG_FILE_PATH], {
-        stdio: ["ignore", "inherit", "inherit"],
+      let cmd = "tail";
+      let args = ["-f",conf.LOG_FILE_PATH];
+      if(os.platform()=="win32"){
+        cmd = "powershell",
+        args = ['-Command','Get-Content',conf.LOG_FILE_PATH,'-Wait']
+      }
+
+      const logs = spawn(cmd, args, {
+        stdio: ["ignore", "inherit", "pipe"],
       });
 
       // Handle errors during log streaming
