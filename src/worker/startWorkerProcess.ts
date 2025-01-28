@@ -9,6 +9,7 @@ import {
   upstreamReqMiddleware,
   routeReqMiddleware,
   fallbackMiddleware,
+  cacheMiddleware
 } from "server/middleware";
 import MiddlewareIntitializer from "../server/middlewareIntitializer";
 import { getSSLConfig } from "@utils";
@@ -46,6 +47,7 @@ export function startWorkerProcess(config: REX_CONFIG) {
           MiddlewareIntitializer(
             config,
             server,
+            cacheMiddleware,
             staticReqMiddleware,
             routeReqMiddleware,
             upstreamReqMiddleware,
@@ -65,6 +67,7 @@ export function startWorkerProcess(config: REX_CONFIG) {
         MiddlewareIntitializer(
           config,
           server,
+          cacheMiddleware,
           staticReqMiddleware,
           routeReqMiddleware,
           upstreamReqMiddleware,

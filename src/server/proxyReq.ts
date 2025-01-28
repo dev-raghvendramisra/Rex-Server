@@ -1,7 +1,7 @@
 import { IncomingMessage, RequestOptions, ServerResponse, ClientRequest } from "http";
 import { logger } from "@lib";
-import { createHttpReq, createHttpsReq, createReqOptions, handleRedirects } from "utils/reqUtils";
-import { ProxyURL } from "@types";
+import { createHttpReq, createHttpsReq, createReqOptions, handleRedirects, performCaching } from "utils/reqUtils";
+import { ProxyURL, ServerInstance } from "@types";
 import { getResHeaders, handleResPipingError, serveRexPage } from "@utils";
 
 let maxRedirect = 5;
@@ -40,6 +40,7 @@ export default async function proxyRequest(
   res: ServerResponse,
   options: RequestOptions,
   proxyURL: ProxyURL,
+  serverInstance:ServerInstance,
   crrRedirects = 0,
   onError?: (err: any, req: IncomingMessage, res: ServerResponse, proxyURL: ProxyURL) => void
 ) {
@@ -51,13 +52,15 @@ export default async function proxyRequest(
     // Handle redirects
     if (proxyRes.headers.location && proxyRes.headers.location.includes("https")) {
       const newOptions = createReqOptions(req, proxyURL, proxyRes.headers.location);
-      return proxyRequest(req, res, newOptions, proxyURL, crrRedirects, onError);
+      return proxyRequest(req, res, newOptions, proxyURL, serverInstance,crrRedirects, onError);
     }
 
     // Forward proxy response to the client
-    res.writeHead(proxyRes.statusCode as number, proxyRes.statusMessage, getResHeaders(undefined, proxyRes));
+    const headers = getResHeaders(undefined, proxyRes.headers,serverInstance)
+    res.writeHead(proxyRes.statusCode as number, proxyRes.statusMessage, headers);
     proxyRes.pipe(res);
-    return handleResPipingError(res, proxyRes);
+    handleResPipingError(res, proxyRes);
+    return performCaching(serverInstance,proxyRes,headers,proxyURL)
   };
 
   // Choose the protocol and create the proxy request

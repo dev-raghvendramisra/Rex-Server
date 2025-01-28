@@ -59,6 +59,7 @@ export const serverInstanceSchema = z.object({
    */
   port: z.number().min(0).max(65535),
 
+  caching : z.union([z.literal("DESABLED"),z.literal("RESPECT"),z.literal("OVERRIDE")]).optional().default("DESABLED"),
   /**
    * The SSL configuration for the server (optional).
    * 

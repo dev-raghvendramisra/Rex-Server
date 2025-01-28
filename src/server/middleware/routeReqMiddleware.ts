@@ -61,7 +61,7 @@ const routeReqMiddleware: Middleware = ({
 
     // Create proxy request options and forward the request
     const options = createReqOptions(req, proxyURL, route.destination);
-    proxyReq(req, res, options, proxyURL, 0);
+    proxyReq(req, res, options, proxyURL, serverInstance ,0);
   } catch (error) {
     // Log the error and serve a 503 error page if possible
     logger.error("ERROR_OCCURRED_IN_ROUTE_REQ_HANDLER", error);

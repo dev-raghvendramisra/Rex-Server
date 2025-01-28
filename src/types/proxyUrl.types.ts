@@ -1,4 +1,5 @@
 import { URL } from "url";
+import { join } from "path";
 
 /**
  * A class that extends the native `URL` class to represent a proxy URL with an optional path.
@@ -30,6 +31,6 @@ export class ProxyURL extends URL {
     } else {
       super(baseUrl);  // Otherwise, use just the base URL
     }
-    this.urlString = baseUrl;  // Store the base URL string
+    this.urlString = join(baseUrl,path ? path : '');  // Store the base URL string
   }
 }

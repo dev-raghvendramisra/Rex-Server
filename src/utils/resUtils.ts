@@ -1,8 +1,10 @@
 import conf from "conf/conf";
 import { getCtypeAndStream } from "./reqUtils";
 import { handleResPipingError } from "./errUtils";
-import { IncomingMessage, ServerResponse } from "http";
+import { IncomingHttpHeaders, IncomingMessage, ServerResponse } from "http";
 import { formatObjects, logger } from "@lib";
+import cacheStore from "cache/cacheManager";
+import {ServerInstance } from "@types";
 
 /**
  * Generates response headers by removing hop-by-hop headers and adding Rex-specific headers.
@@ -21,16 +23,17 @@ import { formatObjects, logger } from "@lib";
  * const headers = getResHeaders('text/html', res);
  * console.log(headers); // Logs the response headers with content-type set to 'text/html'.
  */
-export function getResHeaders(contentType?: string, res?: IncomingMessage) {
+export function getResHeaders(contentType?: string, IncomingHeaders?:IncomingHttpHeaders, serverInstance?:ServerInstance) {
   const hopHeaders = ["X-Powered-By", "Server"];
-  if (res?.headers) {
+  if (IncomingHeaders) {
     hopHeaders.forEach((header) => {
-      delete res.headers[header]; // Remove hop-by-hop headers
+      delete IncomingHeaders[header]; // Remove hop-by-hop headers
     });
   }
   const headers = {
-    ...res?.headers,
+    ...IncomingHeaders,
     "X-Powered-By": "Rex-Server",
+    "X-Rex-Cache" : serverInstance?.caching=="RESPECT" || serverInstance?.caching=="OVERRIDE" ? "MISS" : "BYPASS",
     "Server": "Rex-Server",
   };
   if (contentType) headers["content-type"] = contentType; // Add content-type if provided
@@ -107,3 +110,14 @@ export const serveRexPage = async (res: ServerResponse, code = 200) => {
     res.end("<h1>Rex Proxy server error</h1>");
   }
 };
+
+export const serveFromCache  =(key:string,res:ServerResponse)=>{
+    const cache = cacheStore.get(key)
+    if(!cache){
+      return false
+    }
+    res.writeHead(200,"success",{...cache.headers,"X-Rex-Cache":"HIT"})
+    res.end(cache.body)
+    return true
+} 
+

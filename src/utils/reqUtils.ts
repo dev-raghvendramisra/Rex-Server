@@ -1,14 +1,15 @@
-import { ClientRequest, IncomingMessage, ServerResponse } from "http";
+import { ClientRequest, IncomingHttpHeaders, IncomingMessage, ServerResponse } from "http";
 import { request as httpsRequest, RequestOptions } from "https";
 import { request as httpRequest } from "http";
 import { URL } from "url";
 import { formatObjects, logger } from "@lib";
-import { ProxyURL } from "@types";
+import { ProxyURL, ServerInstance } from "@types";
 import path from "path";
 import { constants, createReadStream } from "fs";
 import { contentType } from "mime-types";
 import { TLSSocket } from "tls";
 import { access } from "fs/promises";
+import cacheStore, { checkCachingPermission, respectCacheHeaders } from "cache/cacheManager";
 
 /**
  * Creates a request options object for an HTTP or HTTPS request.
@@ -198,4 +199,20 @@ export function getReqHeaders(req: IncomingMessage) {
     "X-Forwarded-Proto": req.socket instanceof TLSSocket ? "https" : "http",
     "X-Forwarded-Port": req.socket.localPort,
   };
+}
+
+
+export function performCaching(serverInstance : ServerInstance,res:IncomingMessage,headers:IncomingHttpHeaders,proxyURL:ProxyURL){
+  const cachingAllowed = checkCachingPermission(serverInstance)
+  if(!cachingAllowed){
+     return null
+  }
+  if(cachingAllowed.respect){
+     const upstreamAllowsCaching = respectCacheHeaders(res.headers)
+     if(upstreamAllowsCaching){
+       return cacheStore.pipeIn(res,headers,proxyURL.urlString,upstreamAllowsCaching)
+      }
+      else return null
+    }
+    return cacheStore.pipeIn(res,headers,proxyURL.urlString)
 }

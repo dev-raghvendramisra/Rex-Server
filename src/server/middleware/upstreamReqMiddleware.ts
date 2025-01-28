@@ -33,6 +33,7 @@ const upstreamReqMiddleware: Middleware = async ({
   req,
   res,
   proxyURL,
+  serverInstance,
   config,
   next,
   err,
@@ -75,7 +76,7 @@ const upstreamReqMiddleware: Middleware = async ({
             proxyURL,
             upstream[triedUpstream]
           );
-          proxyReq(req, res, options, proxyURL, 0, onError);
+          proxyReq(req, res, options, proxyURL, serverInstance ,0, onError);
         }
       } else {
         serveRexPage(res, 503); // Serve 503 Service Unavailable for other errors.
@@ -90,7 +91,7 @@ const upstreamReqMiddleware: Middleware = async ({
     const options = createReqOptions(req, proxyURL, nextUpstream.server);
 
     // Forward the request to the selected upstream server
-    proxyReq(req, res, options, proxyURL, 0, onError);
+    proxyReq(req, res, options, proxyURL, serverInstance ,0, onError);
     return nextUpstream;
   } catch (error) {
     logger.error(`UNEXPECTED_ERROR_OCCURED_IN_UPSTREAM_REQ_HANDLER ${error}`);
