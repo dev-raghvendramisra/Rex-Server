@@ -35,7 +35,7 @@ export function createReqOptions(req: IncomingMessage, proxyURL: URL, destinatio
     host: destURL.host,
     protocol: destURL.protocol,
     hostname: destURL.hostname,
-    path: proxyURL.pathname + proxyURL.search,
+    path: proxyURL.pathname || '' + proxyURL.search || '',
   };
   return options;
 }
