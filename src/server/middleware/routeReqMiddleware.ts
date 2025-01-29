@@ -52,8 +52,9 @@ const routeReqMiddleware: Middleware = ({
 
     // Handle wildcard routes (e.g., "/*")
     if (!route) {
-      if (routes.find((r) => r.path === "(/*)")) {
-        route = { destination: routeReq } as typeof routes[0];
+      const fallBackRoute = routes.find((r) => r.path === "(/*)")
+      if (fallBackRoute) {
+        route = fallBackRoute
       } else {
         return next({ code: "404" }); // No matching route, invoke next middleware with 404
       }

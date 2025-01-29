@@ -23,7 +23,7 @@ const program = new Command();
 program
   .name("rex")
   .description("A CLI tool to manage the Rex server.")
-  .version(conf.REX_VERSION) // Version pulled from configuration
+  .version(`v${conf.REX_VERSION}`,'-v ,--version') // Version pulled from configuration
   .option("-i, --init", "Initialize a new rex.config.yaml, which can be used to start the Rex Server")
   .action((options) => {
     // Initialize a new rex.config.yaml if the --init flag is provided
