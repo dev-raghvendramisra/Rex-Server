@@ -3,6 +3,7 @@ import proxyReq from "../proxyReq";
 import { createReqOptions } from "utils/reqUtils";
 import { Middleware } from "../middlewareIntitializer";
 import { serveRexPage } from "@utils";
+import { ProxyURL } from "@types";
 
 /**
  * Middleware to handle route-based proxy requests in Rex Server.
@@ -49,11 +50,12 @@ const routeReqMiddleware: Middleware = ({
 
     // Find a matching route for the request
     let route = routes?.find((r) => r.path === routeReq);
-
+    let pathname = "";
     // Handle wildcard routes (e.g., "/*")
     if (!route) {
-      const fallBackRoute = routes.find((r) => r.path === "(/*)")
+      const fallBackRoute = routes.find((r) => r.path === "/*")
       if (fallBackRoute) {
+        pathname = proxyURL.pathname
         route = fallBackRoute
       } else {
         return next({ code: "404" }); // No matching route, invoke next middleware with 404
@@ -61,7 +63,7 @@ const routeReqMiddleware: Middleware = ({
     }
 
     // Create proxy request options and forward the request
-    const options = createReqOptions(req, proxyURL, route.destination);
+    const options = createReqOptions(req, {...proxyURL,pathname} as ProxyURL, route.destination);
     proxyReq(req, res, options, proxyURL, 0);
   } catch (error) {
     // Log the error and serve a 503 error page if possible

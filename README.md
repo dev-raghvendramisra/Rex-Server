@@ -128,6 +128,8 @@ server:
           destination: http://example.com
         - path: "/path2"
           destination: http://example.com
+        - path: "/*"
+          destination: http://example.com
       
 workers: auto
 ```
@@ -271,6 +273,33 @@ This section defines the server instances and the ports they will listen on. Eac
 
 - **port**: The port the server will listen to (e.g., `80` for HTTP, `443` for HTTPS).
 - **routes**: Define paths that will be proxied to other servers. You can specify the destination for each path.
+
+#### Fallback Path Configuration
+
+In Rex Server, you can define a fallback path also using the `/*` wildcard in your routes. This fallback path will be used when no other routes match the incoming request. The entire requested path will be appended to the destination URL.
+
+Example configuration with a fallback path:
+
+```yml
+server:
+  instances:
+    - port: 80
+      routes:
+        - path: "/path1"
+          destination: http://example.com
+        - path: "/path2"
+          destination: http://example.com
+        - path: "/*"
+          destination: http://fallback.example.com
+```
+
+In this example, if a request does not match `/path1` or `/path2`, it will be forwarded to `http://fallback.example.com` with the entire requested path appended.
+
+**Behavior:**
+- **Normal Path:** Only query strings are attached to the destination URL.
+- **Fallback Path (`/*`):** The entire requested path is appended to the destination URL.
+
+This ensures that unmatched requests are handled gracefully by the fallback server, providing a robust routing mechanism.
 
 #### workers
 The `workers` field defines the number of worker processes to use. If set to `auto`, the number of workers will be automatically determined based on the number of CPU cores.
