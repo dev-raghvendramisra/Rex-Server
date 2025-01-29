@@ -22,7 +22,7 @@ import { formatObjects, logger } from "@lib";
  * console.log(headers); // Logs the response headers with content-type set to 'text/html'.
  */
 export function getResHeaders(contentType?: string, res?: IncomingMessage) {
-  const hopHeaders = ["X-Powered-By", "Server"];
+  const hopHeaders = ["X-Powered-By", "Server","x-powered-by", "server"];
   if (res?.headers) {
     hopHeaders.forEach((header) => {
       delete res.headers[header]; // Remove hop-by-hop headers
