@@ -43,7 +43,7 @@ src/
 │   ├── middlewareInitializer.ts  # Initializes middleware stack
 │   ├── proxyReq.ts               # Handles proxy requests
 │   └── startWorkerProcess.ts     # Worker process initialization
-├── root/                    # Static directory for mock.rex.config.yaml and static HTML files
+├── static/                    # Static directory for mock.rex.config.yaml and static HTML files
 ├── worker/                  # Worker process management
 ├── utils/                   # General utility functions
 └── types/                   # Type definitions (Zod schemas, interfaces)
