@@ -423,3 +423,6 @@ brew install libcap
 
 Rex Server is a powerful and flexible reverse proxy server that makes it easy to manage traffic, handle requests, and scale your application with worker processes. If you need further assistance, visit the [GitHub repository](https://github.com/dev-raghvendramisra/Rex-Server).
 
+## Contribution
+
+To know the contribution architecture and the function refrences of rex-server refer to [Developer documentation](https://github.com/dev-raghvendramisra/Rex-Server/blob/main/DEV_API.md)
