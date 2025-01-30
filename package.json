@@ -6,12 +6,12 @@
   "types": "dist/index.d.ts",
   "type": "commonjs",
   "scripts": {
-    "dev": "nodemon --ext ts --exec ts-node -r tsconfig-paths/register src/cli/main.ts stop",
+    "dev": "nodemon --ext ts --exec ts-node -r tsconfig-paths/register src/cli/main.ts start",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "rm -rf dist && tsc --build && tsc-alias && ts-node src/scripts/updateConf && cp -r ./src/logs ./src/static dist && rsync -av --exclude='conf.ts' ./src/conf/ dist/conf/ && touch dist/conf/master.pid",
     "stop": "ps aux | grep node | awk '{print $2}' | xargs kill",
     "prepublishOnly": "npm run build",
-    "start": "  node dist/cli/main.js stop && npm run build && node dist/cli/main.js start"
+    "start": "node dist/cli/main.js stop > /dev/null 2>&1; npm run build && node dist/cli/main.js start"
   },
   "bin": {
     "rex": "dist/cli/main.js"

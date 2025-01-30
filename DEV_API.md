@@ -258,13 +258,17 @@ The worker sends the response back to the client. If an error occurs, the approp
     ```
 4. To Run the server in development mode:
     ```bash
-    npm start
+    npm run dev
     ```
+    By default, `npm run dev` runs the `start` command of the CLI. You can customize this behavior in the `package.json` file.
 
-5. keep in mind that Rex-Server runs as background process so when you are done run the below command to ensure it does'nt keep consuming resources :
+5. Keep in mind that Rex-Server runs as a background process, so when you are done, run the below command to ensure it doesn't keep consuming resources:
     ```bash
-    npm start
+    npm stop
     ```
+    
+6. The `npm start` command builds the whole project and runs the `start` command of the CLI.
+
 
 ### Adding New Features
 - **Follow the Code Structure:**
