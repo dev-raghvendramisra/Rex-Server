@@ -146,7 +146,7 @@ export function getURL(req: IncomingMessage | string, path?: string) {
  * console.log(cType); // Logs the content type of the file.
  */
 export async function getCtypeAndStream(pathname: string, staticDir: string) {
-  const filePath = path.resolve(staticDir, pathname);
+  const filePath = path.join(staticDir, pathname);
   const cType = contentType(path.extname(filePath));
   if (!cType) {
     return null;
