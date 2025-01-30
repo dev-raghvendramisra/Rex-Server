@@ -8,7 +8,6 @@ import { startMasterProcess } from '@master';
 // Parse command line arguments to extract configuration path
 const args = process.argv;
 const config = parseCliArgs(args, '--config') as REX_CONFIG;
-
 /**
  * Entry point for starting the master or worker process based on the CLI arguments.
  * 

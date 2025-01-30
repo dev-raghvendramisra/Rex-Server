@@ -243,6 +243,7 @@ The worker sends the response back to the client. If an error occurs, the approp
   **Action:** Check the public directory and route configuration.
 
 ## Development and Contribution Guidelines
+
 ### Setting Up the Development Environment
 1. Clone the repository:
     ```bash
@@ -268,6 +269,34 @@ The worker sends the response back to the client. If an error occurs, the approp
     ```
     
 6. The `npm start` command builds the whole project and runs the `start` command of the CLI.
+
+
+### Testing CLI Commands
+To test CLI commands during development, you have several options:
+
+1. **Using Nodemon:**
+    Create custom scripts with `nodemon` to automatically restart the server when files change. For example, add the following script to your `package.json`:
+    ```json
+    "scripts": {
+      "dev:cli": "nodemon --exec 'ts-node' src/cli/main.ts [command]"
+    }
+    ```
+    Then run:
+    ```bash
+    npm run dev:cli
+    ```
+
+2. **Using Other Watching Mechanisms:**
+    Integrate any other file-watching mechanism that suits your development workflow to automatically restart or recompile the project when changes are detected.
+
+3. **Building and Testing:**
+    Build the project and test the CLI command directly:
+    ```bash
+    npm run build
+    node dist/cli/main.js <command>
+    ```
+
+Choose the method that best fits your development process to ensure efficient testing of CLI commands.
 
 
 ### Adding New Features
