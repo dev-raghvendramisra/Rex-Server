@@ -53,7 +53,7 @@ export default async function startRexServer(masterPidPath: string, configPath?:
     const jsonConfig = JSON.stringify(config);
 
     // Spawn the master process
-    const masterProcess = spawn("node", [conf.ENTRY_POINT_PATH, `--config=${jsonConfig}`], {
+    const masterProcess = spawn(conf.SPAWN_COMMAND.cmd, [...conf.SPAWN_COMMAND.args, `--config=${jsonConfig}`], {
       detached: true,
       stdio: ["ignore", "ignore", "pipe"],
     });

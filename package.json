@@ -6,10 +6,11 @@
   "types": "dist/index.d.ts",
   "type": "commonjs",
   "scripts": {
+    "dev": "nodemon --ext ts --exec ts-node -r tsconfig-paths/register src/cli/main.ts stop",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "rm -rf dist && tsc --build && tsc-alias && touch dist/conf/master.pid  && cp -r ./src/logs ./src/static dist && rsync -av --exclude='conf.ts' ./src/conf/ dist/conf/",
+    "build": "rm -rf dist && tsc --build && tsc-alias && ts-node src/scripts/updateConf && cp -r ./src/logs ./src/static dist && rsync -av --exclude='conf.ts' ./src/conf/ dist/conf/ && touch dist/conf/master.pid",
     "stop": "ps aux | grep node | awk '{print $2}' | xargs kill",
-    "prepublishOnly": "ts-node src/scripts/updateCliVersion && npm run build",
+    "prepublishOnly": "npm run build",
     "start": "  node dist/cli/main.js stop && npm run build && node dist/cli/main.js start"
   },
   "bin": {
@@ -30,9 +31,10 @@
   "devDependencies": {
     "@types/mime-types": "^2.1.4",
     "@types/node": "^22.10.6",
+    "nodemon": "^3.1.9",
     "ts-node": "^10.9.2",
     "tsc-alias": "^1.8.10",
-    "typescript": "^5.7.3"
+    "tsconfig-paths": "^4.2.0"
   },
   "dependencies": {
     "chalk": "^4.1.2",

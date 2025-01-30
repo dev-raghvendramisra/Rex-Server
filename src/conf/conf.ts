@@ -4,7 +4,10 @@ const conf = {
     REX_CONFIG_PATH : path.resolve(__dirname,'rex.config.yaml'),
     MASTER_PID_PATH : path.resolve(__dirname,'master.pid'),
     LOG_FILE_PATH : path.resolve(__dirname,'../logs','server.log'),
-    ENTRY_POINT_PATH : path.resolve(__dirname,'..','index.js'),
+    SPAWN_COMMAND : {
+        cmd:'ts-node',
+        args:["-r","tsconfig-paths/register",path.resolve(__dirname,'..','index.ts')]
+    },
     MOCK_CONFIG_PATH : path.resolve(__dirname,'mock.rex.config.yaml'),
     STATIC_DIR_PATH : path.resolve(__dirname,'..','static'),
     REX_VERSION : "1.3.96"
