@@ -31,7 +31,7 @@ export function getResHeaders(contentType?: string, res?: IncomingMessage) {
   const headers = {
     ...res?.headers,
     "X-Powered-By": "Rex-Server",
-    "Server": "Rex-Server",
+    "Server": `Rex-Server/${conf.REX_VERSION}`
   };
   if (contentType) headers["content-type"] = contentType; // Add content-type if provided
   return headers;
@@ -107,3 +107,4 @@ export const serveRexPage = async (res: ServerResponse, code = 200) => {
     res.end("<h1>Rex Proxy server error</h1>");
   }
 };
+
