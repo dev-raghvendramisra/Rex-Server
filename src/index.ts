@@ -5,6 +5,7 @@ import { startWorkerProcess } from '@worker';
 import { parseCliArgs } from '@utils';
 import { startMasterProcess } from '@master';
 
+
 // Parse command line arguments to extract configuration path
 const args = process.argv;
 const config = parseCliArgs(args, '--config') as REX_CONFIG;

@@ -5,6 +5,8 @@ import { initializeRexConfig, startRexServer, streamServerLogs, testConfig } fro
 import stopRexServer from "./actions/stopRexServer";
 import conf from "conf/conf";
 import chalk from "chalk";
+import { exec } from "child_process";
+import path from "path";
 
 const program = new Command();
 
@@ -43,7 +45,7 @@ program
     "Provide the path to 'rex.config.yaml' to customize the server settings."
   )
   .argument("<configPath>", "Path to your configuration file (rex.config.yaml)")
-  .action((configPath) => {
+  .action(async(configPath) => {
     /**
      * Starts the Rex server with a custom configuration.
      * 
@@ -52,7 +54,8 @@ program
      * @example
      * startRexServer("/path/to/rex.config.yaml");
      */
-    startRexServer(conf.MASTER_PID_PATH, configPath);
+    const ip = exec(`node ${path.resolve(__dirname,'../scripts','updateIpInConf.js')}`)
+    ip.on('close',()=>startRexServer(conf.MASTER_PID_PATH, configPath));
   });
 
 // Command to start the Rex server with the default configuration
@@ -66,7 +69,8 @@ program
      * @example
      * startRexServer(conf.MASTER_PID_PATH);
      */
-    startRexServer(conf.MASTER_PID_PATH);
+    const ip = exec(`node ${path.resolve(__dirname,'../scripts','updateIpInConf.js')}`)
+    ip.on('close',()=>startRexServer(conf.MASTER_PID_PATH));
   });
 
 // Command to stop the Rex server

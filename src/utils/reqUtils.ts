@@ -9,6 +9,7 @@ import { constants, createReadStream } from "fs";
 import { contentType } from "mime-types";
 import { TLSSocket } from "tls";
 import { access } from "fs/promises";
+import conf from "conf/conf";
 
 /**
  * Creates a request options object for an HTTP or HTTPS request.
@@ -192,8 +193,8 @@ export function getReqHeaders(req: IncomingMessage) {
   );
   return {
     ...headers,
-    "Via": `1.1 ${req.headers.host}`,
-    "X-Forwarded-For": req.headers["x-forwarded-for"] || req.socket.remoteAddress,
+    "Via": `1.1 Rex-Server/${conf.REX_VERSION}`,
+    "X-Forwarded-For": `${req.headers["x-forwarded-for"] || req.socket.remoteAddress}, ${conf.PROXY_IP}`,
     "X-Forwarded-Host": req.headers.host,
     "X-Forwarded-Proto": req.socket instanceof TLSSocket ? "https" : "http",
     "X-Forwarded-Port": req.socket.localPort,
