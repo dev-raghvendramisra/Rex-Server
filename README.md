@@ -1,5 +1,5 @@
 
-<img src="src/static/Rex-Logo.png" height="150"/>
+<img src="src/static/Rex-Logo.png" alt="logo" height="150"/>
 
 
 # Rex Server - User Documentation
