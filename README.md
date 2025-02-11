@@ -401,9 +401,6 @@ Use the following command to grant the necessary permissions:
 sudo setcap cap_net_bind_service=+ep $(which node)
 ```
 
-#### On Windows
-Running on ports below 1024 typically requires administrator privileges. Start your terminal as an administrator and run the server.
-
 #### On macOS
 Use the following command to grant the necessary permissions:
 
@@ -418,6 +415,10 @@ brew install libcap
 ```
 
 ---
+
+## Notice:
+Due to the instability of the Node.js cluster module on Windows, the server is currently optimized for Linux and macOS only. While you may still run it on Windows, stability and performance may be affected. We recommend using WSL or a Linux/macOS environment for the best experience.
+
 
 ## Conclusion
 
