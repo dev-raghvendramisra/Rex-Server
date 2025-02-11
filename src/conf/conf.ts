@@ -8,7 +8,7 @@ const conf = {
         cmd:'ts-node',
         args:["-r","tsconfig-paths/register",path.resolve(__dirname,'..','index.ts')]
     },
-    MOCK_CONFIG_PATH : path.resolve(__dirname,'mock.rex.config.yaml'),
+    DUMMY_CONFIG_PATH : path.resolve(__dirname,'dummy.rex.config.yaml'),
     STATIC_DIR_PATH : path.resolve(__dirname,'..','static'),
     PROXY_IP : "127.0.0.1",
     REX_VERSION : "1.3.96"

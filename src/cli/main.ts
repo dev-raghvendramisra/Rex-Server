@@ -1,7 +1,14 @@
 #!/usr/bin/env node
 
 import { Command } from "commander";
-import { initializeRexConfig, startRexServer, streamServerLogs, testConfig } from "./actions";
+import {
+  initializeRexConfig,
+  loadCustomRexConfig,
+  restoreDefaultConfig,
+  startRexServer,
+  streamServerLogs,
+  testConfig,
+} from "./actions";
 import stopRexServer from "./actions/stopRexServer";
 import conf from "conf/conf";
 import chalk from "chalk";
@@ -11,117 +18,159 @@ import path from "path";
 const program = new Command();
 
 /**
- * A CLI tool to manage the Rex server.
- * 
- * Provides commands to manage the Rex server, including starting, stopping, testing configurations, 
- * streaming logs, and initializing a configuration file.
- * 
+ * Rex CLI - A command-line interface for managing the Rex server.
+ *
+ * This CLI provides functionalities for configuring, starting, stopping,
+ * and testing the Rex server. Users can also manage server logs and reset
+ * configurations as needed.
+ *
  * @module rex
- * @description Rex is a flexible tool for server management, providing options for configuration setup, 
- *              server startup, log streaming, and configuration testing.
  */
 
 // Setting up the CLI program
 program
   .name("rex")
-  .description("A CLI tool to manage the Rex server.")
-  .version(`v${conf.REX_VERSION}`,'-v ,--version') // Version pulled from configuration
-  .option("-i, --init", "Initialize a new rex.config.yaml, which can be used to start the Rex Server")
+  .description("A command-line tool to manage the Rex server.")
+  .version(`v${conf.REX_VERSION}`, "-v ,--version") // Fetches version from config
+  .option(
+    "-i, --init",
+    "Initialize a new 'rex.config.yaml' in the current directory."
+  )
   .action((options) => {
-    // Initialize a new rex.config.yaml if the --init flag is provided
     if (options?.init) {
       initializeRexConfig();
     } else {
-      // Display the welcome message if no specific command is provided
-      console.log(chalk.greenBright("\nWelcome to Rex CLI! Use 'rex --help' to see available commands.\n"));
+      console.log(
+        chalk.greenBright(
+          "\nWelcome to Rex CLI! Use 'rex --help' to see available commands.\n"
+        )
+      );
     }
   });
 
-// Command to start the Rex server with a custom configuration file
+/**
+ * Load a custom configuration file for Rex.
+ *
+ * This command allows users to load a custom 'rex.config.yaml' file
+ * from an absolute path. The configuration file will be used when
+ * launching the Rex server.
+ *
+ * Usage: `rex load <configPath>`
+ *
+ * @param {string} configPath - Absolute path to the configuration file.
+ */
 program
-  .command("use")
+  .command("load")
   .description(
-    "Start the Rex server using a specified configuration file. " +
-    "Provide the path to 'rex.config.yaml' to customize the server settings."
+    "Load a custom Rex configuration file.\n" +
+      "Provide the absolute path to 'rex.config.yaml'. After loading, use 'rex start' to launch the server."
   )
-  .argument("<configPath>", "Path to your configuration file (rex.config.yaml)")
-  .action(async(configPath) => {
-    /**
-     * Starts the Rex server with a custom configuration.
-     * 
-     * @param {string} configPath - The path to the custom configuration file.
-     * 
-     * @example
-     * startRexServer("/path/to/rex.config.yaml");
-     */
-    const ip = exec(`node ${path.resolve(__dirname,'../scripts','updateIpInConf.js')}`)
-    ip.on('close',()=>startRexServer(conf.MASTER_PID_PATH, configPath));
+  .argument("<configPath>", "Absolute path to the configuration file.")
+  .action(async (configPath) => {
+    if (!path.isAbsolute(configPath)) {
+      console.error(
+        chalk.red("\n> Error: Please provide an absolute path for the configuration file.\n")
+      );
+      process.exit(1);
+    }
+    loadCustomRexConfig(configPath, conf.REX_CONFIG_PATH);
   });
 
-// Command to start the Rex server with the default configuration
+/**
+ * Start the Rex server.
+ *
+ * This command starts the Rex server using the loaded configuration.
+ * Before launching, it updates the IP address in the configuration.
+ *
+ * Usage: `rex start`
+ */
 program
   .command("start")
-  .description("Start the Rex server with the default configuration.")
+  .description("Start the Rex server using the configured settings.")
   .action(() => {
-    /**
-     * Starts the Rex server with the default configuration.
-     * 
-     * @example
-     * startRexServer(conf.MASTER_PID_PATH);
-     */
-    const ip = exec(`node ${path.resolve(__dirname,'../scripts','updateIpInConf.js')}`)
-    ip.on('close',()=>startRexServer(conf.MASTER_PID_PATH));
+    const ip = exec(
+      `node ${path.resolve(__dirname, "../scripts", "updateIpInConf.js")}`
+    );
+    ip.on("close", () => startRexServer(conf.MASTER_PID_PATH));
   });
 
-// Command to stop the Rex server
+/**
+ * Stop the Rex server.
+ *
+ * Stops the running Rex server process. Users can specify a process ID manually.
+ *
+ * Usage: `rex stop [-p <processId>]`
+ *
+ * @param {string} [processId] - (Optional) Manually specify the process ID to terminate.
+ */
 program
   .command("stop")
   .description("Stop the running Rex server.")
-  .option(
-    "-p, --processId <processId>",
-    "Manually specify the master process ID to stop."
-  )
+  .option("-p, --processId <processId>", "Manually specify the process ID to stop.")
   .action((options) => {
-    /**
-     * Stops the Rex server by sending a SIGTERM signal to the process.
-     * If the process ID is not provided via command-line options, it reads the ID from the master PID file.
-     * 
-     * @param {Object} options - The command-line options.
-     * @param {string} [options.processId] - The master process ID to stop (provided via `-p` or `--processId`).
-     * 
-     * @example
-     * stopRexServer({ processId: 12345 }, conf.MASTER_PID_PATH);
-     */
     stopRexServer(options, conf.MASTER_PID_PATH);
   });
 
-// Command to display or export server logs
+/**
+ * Manage server logs.
+ *
+ * Users can stream live server logs or export them to a file.
+ *
+ * Usage:
+ * - `rex log` (Display live logs)
+ * - `rex log -e` (Export logs to 'server.log')
+ */
 program
   .command("log")
-  .option("-e, --export", "It will create a log file named <server.log> in your current working directory which will contain all the logs")
-  .description("Display or export the server logs.")
+  .description(
+    "Display live server logs or export them to a file.\n" +
+      "Use '-e' to export logs to 'server.log' in the current directory."
+  )
+  .option("-e, --export", "Export logs to 'server.log'.")
   .action((options) => {
-    /**
-     * Streams or exports the server logs based on user input.
-     * 
-     * If `-e` or `--export` is provided, it generates a log file in the current working directory.
-     * Otherwise, it streams logs live to the console.
-     * 
-     * @param {Object} options - The command-line options for log streaming or export.
-     * 
-     * @example
-     * streamServerLogs({ export: true });
-     * streamServerLogs({});
-     */
     streamServerLogs(options);
   });
 
-// Command to test the configuration file before starting the server
+/**
+ * Test the configuration before starting the server.
+ *
+ * This command validates a given configuration file.
+ *
+ * Usage:
+ * - `rex test` (Tests the default loaded config)
+ * - `rex test -p <absolutePath>` (Tests a specified config file)
+ *
+ * @param {string} [configPath] - (Optional) Absolute path to a configuration file.
+ */
 program
   .command("test")
-  .option("-p, --path <configPath>", "Path to the configuration file to test")
-  .description("Test the configuration before starting the server to ensure a safe start")
-  .action(testConfig);
+  .description(
+    "Validate the Rex server configuration file.\n" +
+      "Use '-p <absolutePath>' to specify a configuration file."
+  )
+  .option("-p, --path <configPath>", "Absolute path to the configuration file.")
+  .action((options) => {
+    if (options.path && !path.isAbsolute(options.path)) {
+      console.error(
+        chalk.red("Error: Please provide an absolute path for the configuration file.")
+      );
+      process.exit(1);
+    }
+    testConfig(options);
+  });
 
-// Parse command line arguments and execute the appropriate command
+/**
+ * Reset the Rex server to default configuration.
+ *
+ * Restores the server settings to default by replacing the current configuration
+ * with a dummy default configuration.
+ *
+ * Usage: `rex reset`
+ */
+program
+  .command("reset")
+  .description("Reset the Rex server to use the default configuration.")
+  .action(() => restoreDefaultConfig(conf.REX_CONFIG_PATH, conf.DUMMY_CONFIG_PATH));
+
+// Parse command-line arguments
 program.parse(process.argv);

@@ -5,7 +5,7 @@ import conf from "conf/conf";
 /**
  * Initializes and generates the Rex configuration file (`rex.config.yaml`).
  * 
- * This function copies a mock configuration file to the desired destination, allowing users to customize it for their needs. 
+ * This function copies a dummy configuration file to the desired destination, allowing users to customize it for their needs. 
  * The user is provided with instructions on how to use the generated configuration.
  * 
  * - If the configuration file generation is successful, it logs a success message with further instructions.
@@ -46,5 +46,5 @@ export default function initializeRexConfig(): void {
   };
 
   // Export the configuration file
-  fileExporter(conf.MOCK_CONFIG_PATH, destinationFileName, onClose, onError, onOpen);
+  fileExporter(conf.DUMMY_CONFIG_PATH, destinationFileName, onClose, onError, onOpen);
 }

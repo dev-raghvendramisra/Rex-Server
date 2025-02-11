@@ -84,7 +84,7 @@ The worker sends the response back to the client. If an error occurs, the approp
 ## Function Reference
 ### `src/actions/initializeRexConfig.ts`
 **Function:** `initializeRexConfig()`  
-**Description:** Creates a default configuration file by copying from a mock configuration.  
+**Description:** Creates a default configuration file by copying from a dummy configuration.  
 **Parameters:** None  
 
 ### `src/actions/startRexServer.ts`
@@ -93,6 +93,22 @@ The worker sends the response back to the client. If an error occurs, the approp
 **Parameters:**  
 - `masterPidPath`: Path to the master PID file.  
 - `configPath`: Optional path to the configuration file.  
+
+### `src/actions/loadCustomRexConfig.ts`
+**Function:** `loadCustomRexConfig(customConfigPath,mainConfigPath)`
+**Description:** Loads the custom configuration to the rex-server by modifying the main config `rex.config.yaml` with the users' config file data.
+**Paramteres:**
+- `customConfigPath`: Path to the custom configuration provided by user.  
+- `mainConfigPath`: Path to main configuration file.  
+
+
+### `src/actions/restoreDefaultRexConfig.ts`
+**Function:** `restoreDefaultRexConfig((mainConfigPath, dummyConfigPath)`
+**Description:** Restores the default configuration to the rex-server by modifying the main config `rex.config.yaml` with the dummy' config file data.
+**Paramteres:**
+- `mainConfigPath`: Path to main configuration file.  
+- `dummyConfigPath`: Path to the dummy configuration provided.  
+
 
 ### `src/actions/stopRexServer.ts`
 **Function:** `stopRexServer(options, masterPidPath)`  

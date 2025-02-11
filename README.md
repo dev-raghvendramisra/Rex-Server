@@ -100,12 +100,12 @@ Run the following command to generate a default configuration file (`rex.config.
 
 For a global installation:
 ```bash
-rex init
+rex --init
 ```
 
 For a local installation:
 ```bash
-npx rex init
+npx rex --init
 ```
 
 This will create a `rex.config.yaml` file in your current working directory. The file will contain a basic configuration to get you started.
@@ -174,22 +174,23 @@ Rex Server provides a command-line interface (CLI) to manage your server. Here a
 Initialize a new `rex.config.yaml` configuration file.
 
 ```bash
-rex init
+rex --init
 ```
 
-### `rex use <configPath>`
+### `rex load <configPath>`
 
-Start the server using a specific configuration file (`rex.config.yaml`).
+Load the Rex-Serer with your custom configuration file (`rex.config.yaml`).
 
 ```bash
-rex use /path/to/rex.config.yaml
+rex load /path/to/rex.config.yaml
 ```
 
-Replace `/path/to/rex.config.yaml` with the actual path to your configuration file.
+Replace `/path/to/rex.config.yaml` with the actual absolute path to your configuration file.
+After this you need to use `rex start` again to get the new configurations come in flow.
 
 ### `rex start`
 
-Start the Rex server with the default configuration or a custom configuration if provided.
+Start the Rex server
 
 ```bash
 rex start
@@ -226,10 +227,15 @@ This will start the server with the default configuration.
 ### Using a Custom Configuration
 
 ```bash
-rex use /path/to/your/custom/config.yaml
+rex load /path/to/your/custom/config.yaml
 ```
 
-Replace `/path/to/your/custom/config.yaml` with the actual path to your configuration file.
+Replace `/path/to/rex.config.yaml` with the actual absolute path to your configuration file.
+After this you need to use `rex start` again to get the new configurations come in flow.
+
+### Note
+
+Always run `rex test` after loading configuration to avoid any breakouts in runtime.
 
 ---
 
