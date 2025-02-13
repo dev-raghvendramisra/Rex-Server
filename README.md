@@ -169,7 +169,7 @@ This flow ensures that Rex can handle both static file serving and dynamic routi
 
 Rex Server provides a command-line interface (CLI) to manage your server. Here are the available commands:
 
-### `rex init`
+### `rex --init`
 
 Initialize a new `rex.config.yaml` configuration file.
 
