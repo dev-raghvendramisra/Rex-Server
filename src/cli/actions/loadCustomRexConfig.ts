@@ -25,24 +25,24 @@ export default function loadCustomRexConfig(userConfigPath: string, mainConfigPa
   });
 
   userConfig.on('error', (err : any) => {
-    console.error(`\n> Error loading custom configuration: ${userConfigPath}`);
+    console.log(chalk.redBright(`\n> Error loading custom configuration: ${userConfigPath}`));
     if (err.code === 'ENOENT') {
-      console.error("\n> There is no config file at :"+userConfigPath+"\n")
+      console.log(chalk.redBright("\n> There is no config file at :"+userConfigPath+"\n"));
     } else if (err.code === 'EACCES') {
-      console.error(`> Permission denied for: ${userConfigPath}\n`);
+      console.log(chalk.redBright(`> Permission denied for: ${userConfigPath}\n`));
     } else {
-      console.error(`> Error reading file: ${err.message}\n`);
+      console.log(chalk.redBright(`> Error reading file: ${err.message}\n`));
     }
   });
 
   mainConfig.on('error', (err:any) => {
-    console.error(`\n> Error loading custom configuration: ${userConfigPath}`);
+    console.log(chalk.redBright(`\n> Error loading custom configuration: ${userConfigPath}`));
     if (err.code === 'ENOENT') {
-      console.error(`> File not found: ${mainConfigPath}\n`);
+      console.log(chalk.redBright(`> File not found: ${mainConfigPath}\n`));
     } else if (err.code === 'EACCES') {
-      console.error(`> Permission denied: ${mainConfigPath}\n`);
+      console.log(chalk.redBright(`> Permission denied: ${mainConfigPath}\n`));
     } else {
-      console.error(`> Error writing file: ${err.message}\n`);
+      console.log(chalk.redBright(`> Error writing file: ${err.message}\n`));
     }
   });
 
