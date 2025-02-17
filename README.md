@@ -185,7 +185,7 @@ Load the Rex-Serer with your custom configuration file (`rex.config.yaml`).
 rex load /path/to/rex.config.yaml
 ```
 
-Replace `/path/to/rex.config.yaml` with the actual absolute path to your configuration file.
+Replace `/path/to/rex.config.yaml` with the actual path to your configuration file.
 After this you need to use `rex start` again to get the new configurations come in flow.
 
 ### `rex start`
@@ -230,7 +230,7 @@ This will start the server with the default configuration.
 rex load /path/to/your/custom/config.yaml
 ```
 
-Replace `/path/to/rex.config.yaml` with the actual absolute path to your configuration file.
+Replace `/path/to/rex.config.yaml` with the actual path to your configuration file.
 After this you need to use `rex start` again to get the new configurations come in flow.
 
 ### Note

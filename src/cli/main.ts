@@ -67,12 +67,6 @@ program
   )
   .argument("<configPath>", "Absolute path to the configuration file.")
   .action(async (configPath) => {
-    if (!path.isAbsolute(configPath)) {
-      console.error(
-        chalk.red("\n> Error: Please provide an absolute path for the configuration file.\n")
-      );
-      process.exit(1);
-    }
     loadCustomRexConfig(configPath, conf.REX_CONFIG_PATH);
   });
 
@@ -149,15 +143,7 @@ program
       "Use '-p <absolutePath>' to specify a configuration file."
   )
   .option("-p, --path <configPath>", "Absolute path to the configuration file.")
-  .action((options) => {
-    if (options.path && !path.isAbsolute(options.path)) {
-      console.error(
-        chalk.red("Error: Please provide an absolute path for the configuration file.")
-      );
-      process.exit(1);
-    }
-    testConfig(options);
-  });
+  .action(testConfig);
 
 /**
  * Reset the Rex server to default configuration.

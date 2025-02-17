@@ -16,6 +16,9 @@ import path from "path";
  * loadCustomRexConfig('/path/to/user/config.json', '/path/to/main/config.json');
  */
 export default function loadCustomRexConfig(userConfigPath: string, mainConfigPath: string) {
+ 
+  userConfigPath = path.resolve(process.cwd(),userConfigPath)
+
   const userConfig = createReadStream(userConfigPath);
   const mainConfig = createWriteStream(mainConfigPath,{
     flags:'w'
@@ -24,9 +27,9 @@ export default function loadCustomRexConfig(userConfigPath: string, mainConfigPa
   userConfig.on('error', (err : any) => {
     console.error(`\n> Error loading custom configuration: ${userConfigPath}`);
     if (err.code === 'ENOENT') {
-      console.error("\n> Error loading config file:")
+      console.error("\n> There is no config file at :"+userConfigPath+"\n")
     } else if (err.code === 'EACCES') {
-      console.error(`> Permission denied: ${userConfigPath}\n`);
+      console.error(`> Permission denied for: ${userConfigPath}\n`);
     } else {
       console.error(`> Error reading file: ${err.message}\n`);
     }
