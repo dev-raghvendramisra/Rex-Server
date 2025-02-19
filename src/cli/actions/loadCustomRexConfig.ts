@@ -27,7 +27,7 @@ export default function loadCustomRexConfig(userConfigPath: string, mainConfigPa
   userConfig.on('error', (err : any) => {
     console.log(chalk.redBright(`\n> Error loading custom configuration: ${userConfigPath}`));
     if (err.code === 'ENOENT') {
-      console.log(chalk.redBright("\n> There is no config file at :"+userConfigPath+"\n"));
+      console.log(chalk.redBright("> There is no config file at :"+userConfigPath+"\n"));
     } else if (err.code === 'EACCES') {
       console.log(chalk.redBright(`> Permission denied for: ${userConfigPath}\n`));
     } else {
